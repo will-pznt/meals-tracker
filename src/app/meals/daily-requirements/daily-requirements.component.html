@@ -1,0 +1,19 @@
+<div class="cards-container">
+  <div class="daily-card" appearance="outlined">
+    <div class="card-title">Daily Summary</div>
+    <app-nutrients [nutrients]="dailyNutrients"></app-nutrients>
+  </div>
+
+  <mat-card class="daily-card recommendations-card" appearance="outlined">
+    <mat-card-content>
+      <mat-card-title class="card-title">Recommendations</mat-card-title>
+      @if (lowNutrientsRecommendations.length === 0) {
+        <div class="no-deficiency">Your daily intake meets all recommended values! 🎉</div>
+      }
+      <div class="recommendation" *ngFor="let rec of lowNutrientsRecommendations" class="nutrient-rec">
+        <span class="nutrient-name">{{ rec.nutrient.label }}:</span>
+        <span class="foods">{{ rec.foods.join(', ') }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

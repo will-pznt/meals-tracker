@@ -1,0 +1,762 @@
+[
+  {
+    "nutrientName": "Energy",
+    "foodName": "Rice"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Oats"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Potatoes"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Bread"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Pasta"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Peanut butter"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Milk"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Energy",
+    "foodName": "Chicken breast"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Chicken breast"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Lentils"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Tofu"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Greek yogurt"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Peanuts"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Turkey"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Beef"
+  },
+  {
+    "nutrientName": "Protein",
+    "foodName": "Quinoa"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Olive oil"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Avocado"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Peanut butter"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Almonds"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Cheese"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Walnuts"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Dark chocolate"
+  },
+  {
+    "nutrientName": "Total lipid (fat)",
+    "foodName": "Butter"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Rice"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Oats"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Potatoes"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Bread"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Pasta"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Apple"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Sweet potato"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Quinoa"
+  },
+  {
+    "nutrientName": "Carbohydrate, by difference",
+    "foodName": "Corn"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Oats"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Lentils"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Chickpeas"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Almonds"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Apples"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Brown rice"
+  },
+  {
+    "nutrientName": "Fiber, total dietary",
+    "foodName": "Carrots"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Apples"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Oranges"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Strawberries"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Mango"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Pineapple"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Grapes"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Blueberries"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Cherries"
+  },
+  {
+    "nutrientName": "Sugars, total including NLEA",
+    "foodName": "Peaches"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Milk"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Cheddar cheese"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Yogurt"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Tofu"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Almonds"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Kale"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Sardines"
+  },
+  {
+    "nutrientName": "Calcium, Ca",
+    "foodName": "Fortified orange juice"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Beef"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Lentils"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Chickpeas"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Tofu"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Turkey"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Pumpkin seeds"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Fortified cereal"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Dark chocolate"
+  },
+  {
+    "nutrientName": "Iron, Fe",
+    "foodName": "Kidney beans"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Almonds"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Cashews"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Black beans"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Peanuts"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Brown rice"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Pumpkin seeds"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Oats"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Avocado"
+  },
+  {
+    "nutrientName": "Magnesium, Mg",
+    "foodName": "Soybeans"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Potatoes"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Sweet potato"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Tomatoes"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Avocado"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Oranges"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Beans"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Yogurt"
+  },
+  {
+    "nutrientName": "Potassium, K",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Table salt"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Soy sauce"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Cheese"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Bread"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Ham"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Pickles"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Canned soup"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Olives"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Sodium, Na",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Beef"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Pumpkin seeds"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Cashews"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Chickpeas"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Yogurt"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Oats"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Lentils"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Milk"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Chicken"
+  },
+  {
+    "nutrientName": "Zinc, Zn",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Carrots"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Sweet potato"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Kale"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Pumpkin"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Red bell pepper"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Mango"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Apricot"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Vitamin A, RAE",
+    "foodName": "Cantaloupe"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Oranges"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Strawberries"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Kiwi"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Red bell pepper"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Tomatoes"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Potatoes"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Cabbage"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Pineapple"
+  },
+  {
+    "nutrientName": "Vitamin C, total ascorbic acid",
+    "foodName": "Mango"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Mackerel"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Sardines"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Fortified milk"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Fortified cereal"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Tuna"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Cod liver oil"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Cheese"
+  },
+  {
+    "nutrientName": "Vitamin D (D2 + D3)",
+    "foodName": "Fortified orange juice"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Almonds"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Sunflower seeds"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Avocado"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Olive oil"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Peanuts"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Hazelnuts"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Kiwi"
+  },
+  {
+    "nutrientName": "Vitamin E (alpha-tocopherol)",
+    "foodName": "Mango"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Kale"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Broccoli"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Brussels sprouts"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Cabbage"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Green beans"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Asparagus"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Lettuce"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Spinach salad"
+  },
+  {
+    "nutrientName": "Vitamin K (phylloquinone)",
+    "foodName": "Parsley"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Chickpeas"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Bananas"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Potatoes"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Chicken breast"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Turkey"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Tuna"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Spinach"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Avocado"
+  },
+  {
+    "nutrientName": "Vitamin B-6",
+    "foodName": "Pistachios"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Salmon"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Mackerel"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Sardines"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Beef"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Eggs"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Milk"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Cheese"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Tuna"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Fortified cereal"
+  },
+  {
+    "nutrientName": "Vitamin B-12",
+    "foodName": "Yogurt"
+  }
+]

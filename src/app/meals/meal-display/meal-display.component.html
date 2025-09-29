@@ -1,0 +1,21 @@
+<mat-card class="meal-card" appearance="outlined">
+  <mat-card-content>
+    <div class="meal-title">{{ selectedMeal }}</div>
+    <div class="sub-header">
+      <app-food-search (foodSelected)="addFood($event)"></app-food-search>
+    </div>
+    <div class="meal-grid">
+      <div class="meal-column">
+        <app-meal-details
+          [foodItems]="foodItems"
+          (quantityFoodItemEvent)="updateQuantity($event)"
+          (deleteFoodItemEvent)="onDeleteFoodItem($event)"
+        ></app-meal-details>
+      </div>
+      <div class="nutrients-column">
+        <span class="meal-info">Meal nutrition vs daily needs</span>
+        <app-nutrients [nutrients]="sumEssentialNutrients"></app-nutrients>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

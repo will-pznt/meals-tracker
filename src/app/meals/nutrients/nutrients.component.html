@@ -1,0 +1,22 @@
+@if (nutrients) {
+  <div class="flex-container">
+    @for (nutrient of nutrients; track nutrient.nutrientName) {
+      <div class="item-container">
+        <span class="label">
+          <span class="icon">{{ nutrientIcons[nutrient.nutrientName] || '❓' }}</span>
+          <span class="label-text">{{ nutrient.label }}</span>
+          <span class="unitName">({{ nutrient.unitName }})</span>
+        </span>
+        <div class="bar-container">
+          <div
+            class="bar-fill"
+            [style.width.%]="getPercent(nutrient)"
+            [class.over]="nutrient.value > getDailyValue(nutrient)"
+          ></div>
+          <span class="bar-text">{{ getPercent(nutrient) }}%</span>
+        </div>
+        <span>{{ nutrient.value }} / {{ getDailyValue(nutrient) }} </span>
+      </div>
+    }
+  </div>
+}

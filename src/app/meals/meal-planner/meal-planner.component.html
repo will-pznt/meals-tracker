@@ -1,0 +1,53 @@
+<div class="meal-toggle-container">
+  <div class="left-and-middle">
+    <div class="left-controls">
+      <button class="meal-button" [class.selected]="selectedMeal === 'breakfast'" (click)="selectMeal('breakfast')">
+        Breakfast
+      </button>
+      <button class="meal-button" [class.selected]="selectedMeal === 'lunch'" (click)="selectMeal('lunch')">
+        Lunch
+      </button>
+      <button class="meal-button" [class.selected]="selectedMeal === 'dinner'" (click)="selectMeal('dinner')">
+        Dinner
+      </button>
+      <button class="meal-button" [class.selected]="selectedMeal === 'daily'" (click)="selectMeal('daily')">
+        Daily
+      </button>
+    </div>
+
+    <div class="middle-row">
+      <mat-form-field>
+        <mat-label>Choose a date</mat-label>
+        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange($event)" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <div class="gender-toggle">
+        <div class="slider" [style.transform]="gender === 'men' ? 'translateX(0%)' : 'translateX(100%)'"></div>
+        <button class="gender-button" [class.selected]="gender === 'men'" (click)="setGender('men')">Man</button>
+        <button class="gender-button" [class.selected]="gender === 'women'" (click)="setGender('women')">Woman</button>
+      </div>
+
+      <button class="meal-button logout-button" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<div class="meal-container">
+  @if (loading) {
+    <mat-spinner class="spinner"></mat-spinner>
+  } @else {
+    @if (selectedMeal !== 'daily') {
+      <app-meal-display
+        [selectedMeal]="selectedMeal"
+        [selectedDate]="selectedDate"
+        [mealFoodItems]="mealFoodItems"
+        [sumEssentialNutrients]="sumEssentialNutrients"
+        (addingFoodToMeal)="onFoodAdded($event)"
+        (updatingQuantityFood)="onQuantityChanged($event)"
+      ></app-meal-display>
+    } @else {
+      <app-daily-requirements [mealFoodItems]="mealFoodItems"></app-daily-requirements>
+    }
+  }
+</div>

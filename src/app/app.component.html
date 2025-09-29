@@ -1,0 +1,11 @@
+<app-header></app-header>
+
+<div class="app-container">
+  @if (loading) {
+    <mat-spinner class="center-spinner"></mat-spinner>
+  } @else {
+    <router-outlet></router-outlet>
+  }
+</div>
+
+<app-footer></app-footer>

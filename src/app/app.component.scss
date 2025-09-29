@@ -1,0 +1,15 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.toolbar {
+  align-self: flex-start;
+  margin-bottom: 1rem;
+}
+
+.center-spinner {
+  display: block;
+  margin: 50px auto;
+}

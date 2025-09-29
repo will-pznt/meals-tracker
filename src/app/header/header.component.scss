@@ -1,0 +1,57 @@
+.header {
+  max-width: 100%;
+  background: linear-gradient(135deg, #42a5f5, #1e88e5);
+  padding: 1rem 1rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Roboto', sans-serif;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .header-content {
+    text-align: center;
+    z-index: 2;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: 1px;
+      transition:
+        transform 0.3s ease,
+        color 0.3s ease;
+      cursor: default;
+
+      &:hover {
+        transform: scale(1.05);
+        color: #fff9c4;
+      }
+    }
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(-25deg);
+  }
+
+  50% {
+    transform: translateY(-15px) rotate(-25deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(-25deg);
+  }
+}
+.header-logo {
+  width: 100px; /* adjust size */
+  height: 100px; /* maintain square ratio */
+  display: block;
+  margin: 0 auto 0; /* center and add spacing below */
+  background: transparent;
+  background-color: transparent;
+}

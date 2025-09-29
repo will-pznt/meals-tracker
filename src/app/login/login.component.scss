@@ -1,0 +1,82 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+
+  mat-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); // subtle shadow
+    background-color: #ffffff;
+  }
+
+  h2 {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    mat-form-field {
+      width: 100%;
+
+      .mat-form-field-wrapper {
+        background: #f9f9f9;
+        border-radius: 8px;
+        padding: 0.2rem 0.5rem;
+      }
+    }
+
+    button {
+      margin-top: 0.5rem;
+      height: 48px;
+      font-weight: 500;
+      border-radius: 8px;
+      text-transform: none;
+      background-color: #3f51b5;
+      color: #fff;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #303f9f;
+      }
+
+      &:disabled {
+        background-color: #9fa8da;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .toggle-link {
+    text-align: center;
+    margin-top: 0.5rem;
+
+    a {
+      cursor: pointer;
+      color: #3f51b5;
+      text-decoration: none;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  mat-spinner {
+    display: block;
+    margin: 1rem auto;
+  }
+}
