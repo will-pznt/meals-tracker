@@ -1,7 +1,7 @@
 // environment.ts
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:3000',
+  apiUrl: 'https://meals-tracker-back.onrender.com',
   firebaseConfig: {
     apiKey: 'AIzaSyBLzWT9yJqckExvkTgOtyTDJ3UIpcOmvFs',
     authDomain: 'meal-nutrition-e08bf.firebaseapp.com',
