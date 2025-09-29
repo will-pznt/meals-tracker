@@ -7,6 +7,11 @@ The app was developed to **showcase my skills in modern web development** by com
 
 📍 back-end github : https://github.com/will-pznt/meals-tracker-back
 
+ **Online Demo:** [https://meals-tracker-fio4.onrender.com](https://meals-tracker-fio4.onrender.com)
+
+**Note:** Loading may take some time on the first connection because the web service may spin down after inactivity (Render free tier behavior).
+
+
 ---
 
 ## 🚀 Features
