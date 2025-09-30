@@ -72,6 +72,10 @@ export class FoodSearchComponent implements OnInit {
     return food.description || '';
   }
 
+  /**
+   * Handle food selection from autocomplete
+   * @param food
+   */
   selectFood(food: FoodItem): void {
     food.quantity = 100;
     this.foodSelected.emit(food);

@@ -48,6 +48,9 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
     this.sub?.unsubscribe();
   }
 
+  /**
+   * Update daily nutrients based on all meal food items
+   */
   private updateDailyNutrients(): void {
     const allItems: FoodItem[] = [
       ...this.mealFoodItems.breakfast,
@@ -58,6 +61,9 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
     this.dailyNutrients = this.foodService.sumEssentialNutrients(allItems);
   }
 
+  /**
+   * Update low nutrients recommendations based on daily nutrients
+   */
   private updateLowNutrientsRecommendations(): void {
     this.lowNutrientsRecommendations = [];
 

@@ -76,16 +76,28 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     this.loadSub?.unsubscribe();
   }
 
+  /**
+   * Select meal
+   * @param meal
+   */
   selectMeal(meal: 'breakfast' | 'lunch' | 'dinner' | 'daily'): void {
     this.selectedMeal = meal;
     this.recalculateNutrients();
   }
 
+  /**
+   * Handle date change
+   * @param newValue
+   */
   onDateChange(newValue: Date): void {
     this.selectedDate = newValue ? new Date(newValue) : new Date();
     this.loadMeals();
   }
 
+  /**
+   * Handle food added
+   * @param food
+   */
   onFoodAdded(food: FoodItem): void {
     if (this.selectedMeal !== 'daily') {
       this.mealFoodItems[this.selectedMeal] = [...this.mealFoodItems[this.selectedMeal], food];
@@ -94,6 +106,10 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     this.saveMeal();
   }
 
+  /**
+   *
+   * @param updatedFood
+   */
   onQuantityChanged(updatedFood: FoodItem): void {
     if (this.selectedMeal !== 'daily') {
       this.mealFoodItems[this.selectedMeal] = this.mealFoodItems[this.selectedMeal].map((f) =>
@@ -108,6 +124,10 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     this.sumEssentialNutrients = this.foodService.sumEssentialNutrients(this.foodItems);
   }
 
+  /**
+   * Save meal to backend
+   * @returns
+   */
   private saveMeal(): void {
     if (!this.selectedDate) return;
 
@@ -139,6 +159,11 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Format date to 'YYYY-MM-DD'
+   * @param date
+   * @returns
+   */
   private formatDateLocal(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -146,6 +171,9 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
 
+  /**
+   * Load meals for selected date
+   */
   private loadMeals(): void {
     this.loading = true;
     const dateIso = this.formatDateLocal(this.selectedDate);
@@ -164,11 +192,18 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Set gender
+   * @param value
+   */
   setGender(value: 'men' | 'women'): void {
     this.gender = value;
     this.genderService.setGender(this.gender);
   }
 
+  /**
+   * Logout user
+   */
   logout(): void {
     this.authService.logout().subscribe({
       next: () => {

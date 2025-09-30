@@ -33,10 +33,20 @@ export class NutrientsComponent implements OnChanges, OnDestroy {
     this.sub?.unsubscribe();
   }
 
+  /**
+   * Get daily value
+   * @param nutrient
+   * @returns
+   */
   getDailyValue(nutrient: FoodNutrientParsed): number {
     return this.gender === 'men' ? (nutrient.dailyValueMen ?? 0) : (nutrient.dailyValueWomen ?? 0);
   }
 
+  /**
+   * Get percent of daily value
+   * @param nutrient
+   * @returns
+   */
   getPercent(nutrient: FoodNutrientParsed): number {
     const daily = this.getDailyValue(nutrient);
     if (!daily || daily === 0) return 0;

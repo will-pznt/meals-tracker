@@ -32,11 +32,21 @@ export class MealDetailsComponent {
 
   columnsToDisplay = ['description', 'quantity', 'actions'];
 
+  /**
+   * Update quantity of a food item and emit event
+   * @param foodItem
+   * @param newQuantity
+   */
   updateQuantity(foodItem: FoodItem, newQuantity: number): void {
     foodItem.quantity = newQuantity;
     this.quantityFoodItemEvent.emit(foodItem);
   }
 
+  /**
+   * Limit input to five digits and update quantity
+   * @param event
+   * @param foodItem
+   */
   limitToFiveDigits(event: Event, foodItem: FoodItem): void {
     const input = event.target as HTMLInputElement;
     if (input.value.length > 4) {
@@ -48,6 +58,11 @@ export class MealDetailsComponent {
       this.updateQuantity(foodItem, numericValue);
     }
   }
+
+  /**
+   * Emit event to delete a food item
+   * @param foodItem
+   */
   deleteFoodItem(foodItem: FoodItem): void {
     this.deleteFoodItemEvent.emit(foodItem);
   }

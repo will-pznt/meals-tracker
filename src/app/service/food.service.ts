@@ -16,6 +16,11 @@ export class FoodService {
 
   constructor() {}
 
+  /** Searches for foods using the provided query string.
+   * Each returned food item is assigned a default quantity of 100 grams.
+   * @param query The search query string.
+   * @returns An Observable emitting an array of FoodItem objects.
+   */
   searchFoods(query: string): Observable<FoodItem[]> {
     return this.http.get<any>(`${this.BASE}/search`, { params: { q: query } }).pipe(
       map((res) =>
@@ -27,9 +32,19 @@ export class FoodService {
     );
   }
 
+  /** Fetches detailed information for a specific food item by its FDC ID.
+   * @param fdcId The FDC ID of the food item.
+   * @returns An Observable emitting the detailed food item data.
+   */
   getFoodDetails(fdcId: number): Observable<any> {
     return this.http.get<any>(`${this.BASE}/${fdcId}`);
   }
+
+  /** Sums the essential nutrients across a list of food items, scaling each nutrient by the food item's quantity.
+   * If a food item does not specify a quantity, it defaults to 100 grams.
+   * @param foodItems An array of FoodItem objects to sum nutrients from.
+   * @returns An array of FoodNutrientParsed objects representing the summed essential nutrients.
+   */
   sumEssentialNutrients(foodItems: FoodItem[]): FoodNutrientParsed[] {
     const summedNutrients = ESSENTIAL_NUTRIENTS_DATA.map((nutrient) => ({
       ...nutrient,

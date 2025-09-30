@@ -56,6 +56,11 @@ export class LoginComponent {
       ?.valueChanges.subscribe(() => this.authForm.updateValueAndValidity({ onlySelf: false }));
   }
 
+  /**
+   * Validate that password and confirm password match
+   * @param group
+   * @returns
+   */
   passwordMatchValidator(group: AbstractControl): { [key: string]: boolean } | null {
     const password = group.get('password')?.value;
     const confirm = group.get('confirmPassword')?.value;
@@ -64,12 +69,19 @@ export class LoginComponent {
     return password === confirm ? null : { mismatch: true };
   }
 
+  /**
+   * Toggle between login and register modes
+   */
   toggleMode(): void {
     this.isRegisterMode = !this.isRegisterMode;
     this.authForm.get('confirmPassword')?.setValidators(this.isRegisterMode ? Validators.required : null);
     this.authForm.get('confirmPassword')?.updateValueAndValidity();
   }
 
+  /**
+   * Handle form submission for login or registration
+   * @returns
+   */
   onSubmit(): void {
     this.authForm.markAllAsTouched();
 

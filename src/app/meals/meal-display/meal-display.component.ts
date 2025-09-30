@@ -36,14 +36,27 @@ export class MealDisplayComponent {
     return this.mealFoodItems[this.selectedMeal] || [];
   }
 
+  /**
+   * Emit event to add food to the selected meal
+   * @param food
+   */
   addFood(food: FoodItem): void {
     this.addingFoodToMeal.emit(food);
   }
 
+  /**
+   * Emit event to update quantity of a food item
+   * @param updatedItems
+   */
   updateQuantity(updatedItems: FoodItem): void {
     this.updatingQuantityFood.emit(updatedItems);
   }
 
+  /**
+   * Delete a food item from the meal
+   * @param foodItem
+   * @returns
+   */
   onDeleteFoodItem(foodItem: FoodItem): void {
     if (!foodItem.mealId) {
       this.snackBar.open('❌ Missing mealId for deletion', 'Close', { duration: 3000 });
