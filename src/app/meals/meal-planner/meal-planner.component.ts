@@ -106,7 +106,7 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
         this.snackBar.open('ℹ️ This food is already in the meal', 'Close', { duration: 3000 });
         return;
       }
-      this.mealFoodItems[this.selectedMeal].push(food);
+      this.mealFoodItems[this.selectedMeal] = [...this.mealFoodItems[this.selectedMeal], food];
       this.recalculateNutrients();
       this.saveMeal();
     }

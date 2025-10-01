@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,8 +24,7 @@ import { MinMaxDirective } from './min-max.directive';
     MinMaxDirective,
   ],
   templateUrl: './meal-details.component.html',
-  styleUrls: ['./meal-details.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  styleUrls: ['./meal-details.component.scss']
 })
 export class MealDetailsComponent {
   @Input() foodItems: FoodItem[] = [];
