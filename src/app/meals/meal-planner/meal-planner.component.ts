@@ -100,24 +100,31 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
    */
   onFoodAdded(food: FoodItem): void {
     if (this.selectedMeal !== 'daily') {
-      this.mealFoodItems[this.selectedMeal] = [...this.mealFoodItems[this.selectedMeal], food];
+      const exists = this.mealFoodItems[this.selectedMeal].some((f) => f.fdcId === food.fdcId);
+
+      if (exists) {
+        this.snackBar.open('ℹ️ This food is already in the meal', 'Close', { duration: 3000 });
+        return;
+      }
+      this.mealFoodItems[this.selectedMeal].push(food);
+      this.recalculateNutrients();
+      this.saveMeal();
     }
-    this.recalculateNutrients();
-    this.saveMeal();
   }
 
   /**
-   *
+   * Handle quantity change
    * @param updatedFood
    */
   onQuantityChanged(updatedFood: FoodItem): void {
     if (this.selectedMeal !== 'daily') {
-      this.mealFoodItems[this.selectedMeal] = this.mealFoodItems[this.selectedMeal].map((f) =>
-        f.fdcId === updatedFood.fdcId ? { ...f, quantity: updatedFood.quantity } : f,
-      );
+      const existingItem = this.mealFoodItems[this.selectedMeal].find((f) => f.fdcId === updatedFood.fdcId);
+      if (existingItem) {
+        existingItem.quantity = updatedFood.quantity;
+        this.recalculateNutrients();
+        this.saveMeal();
+      }
     }
-    this.recalculateNutrients();
-    this.saveMeal();
   }
 
   private recalculateNutrients(): void {
@@ -149,10 +156,9 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
           savedMeal.id &&
           (this.selectedMeal === 'breakfast' || this.selectedMeal === 'lunch' || this.selectedMeal === 'dinner')
         ) {
-          this.mealFoodItems[this.selectedMeal] = this.foodItems.map((f) => ({
-            ...f,
-            mealId: savedMeal.id,
-          }));
+          this.foodItems.forEach((f) => {
+            f.mealId = savedMeal.id;
+          });
         }
       },
       error: () => this.snackBar.open('❌ Failed to save meal', 'Close', { duration: 3000 }),

@@ -6,8 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-
 import { FoodItem } from '../../data-models/FoodItem';
+import { debounceTime, Subject } from 'rxjs';
+import { MinMaxDirective } from './min-max.directive';
 
 @Component({
   selector: 'app-meal-details',
@@ -20,6 +21,7 @@ import { FoodItem } from '../../data-models/FoodItem';
     MatFormFieldModule,
     FormsModule,
     MatInputModule,
+    MinMaxDirective,
   ],
   templateUrl: './meal-details.component.html',
   styleUrls: ['./meal-details.component.scss'],
@@ -30,32 +32,42 @@ export class MealDetailsComponent {
   @Output() quantityFoodItemEvent = new EventEmitter<FoodItem>();
   @Output() deleteFoodItemEvent = new EventEmitter<FoodItem>();
 
+  private quantityChangeSubject = new Subject<FoodItem>();
+  private lastEmittedQuantities = new Map<number, number>();
+
   columnsToDisplay = ['description', 'quantity', 'actions'];
 
-  /**
-   * Update quantity of a food item and emit event
-   * @param foodItem
-   * @param newQuantity
-   */
-  updateQuantity(foodItem: FoodItem, newQuantity: number): void {
-    foodItem.quantity = newQuantity;
-    this.quantityFoodItemEvent.emit(foodItem);
+  constructor() {
+    this.quantityChangeSubject.pipe(debounceTime(500)).subscribe((foodItem) => this.emitIfChanged(foodItem));
   }
 
   /**
-   * Limit input to five digits and update quantity
-   * @param event
+   * Update quantity of a food item and emit event after debounce time
    * @param foodItem
    */
-  limitToFiveDigits(event: Event, foodItem: FoodItem): void {
-    const input = event.target as HTMLInputElement;
-    if (input.value.length > 4) {
-      input.value = input.value.slice(0, 4);
-    }
+  onQuantityChange(foodItem: FoodItem): void {
+    this.quantityChangeSubject.next(foodItem);
+  }
 
-    const numericValue = Number(input.value);
-    if (!isNaN(numericValue)) {
-      this.updateQuantity(foodItem, numericValue);
+  /**
+   * Emit event if quantity has changed on input blur
+   * @param foodItem
+   */
+  onQuantityBlur(foodItem: FoodItem): void {
+    this.emitIfChanged(foodItem);
+  }
+
+  /**
+   * Emit event if quantity has changed
+   * @param foodItem
+   */
+  private emitIfChanged(foodItem: FoodItem): void {
+    if (typeof foodItem.fdcId === 'number') {
+      const lastValue = this.lastEmittedQuantities.get(foodItem.fdcId);
+      if (lastValue !== foodItem.quantity && foodItem.quantity !== undefined) {
+        this.lastEmittedQuantities.set(foodItem.fdcId, foodItem.quantity);
+        this.quantityFoodItemEvent.emit(foodItem);
+      }
     }
   }
 
@@ -65,5 +77,9 @@ export class MealDetailsComponent {
    */
   deleteFoodItem(foodItem: FoodItem): void {
     this.deleteFoodItemEvent.emit(foodItem);
+  }
+
+  trackByFdcId(_: number, item: FoodItem): number {
+    return item.fdcId;
   }
 }

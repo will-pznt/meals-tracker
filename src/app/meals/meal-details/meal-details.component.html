@@ -11,9 +11,11 @@
         <input
           [(ngModel)]="foodItem.quantity"
           type="number"
-          min="0"
-          max="9999"
-          (input)="limitToFiveDigits($event, foodItem)"
+          [min]="1"
+          [max]="9999"
+          minMax
+          (ngModelChange)="onQuantityChange(foodItem)"
+          (blur)="onQuantityBlur(foodItem)"
         />
       </td>
     </ng-container>
@@ -28,7 +30,7 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; trackBy: trackByFdcId"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplay"></tr>
   </table>
 } @else {

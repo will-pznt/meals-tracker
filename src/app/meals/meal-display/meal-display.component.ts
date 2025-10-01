@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject, ChangeDetectionStrategy } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -15,6 +15,7 @@ import { NutrientsComponent } from '../nutrients/nutrients.component';
   standalone: true,
   templateUrl: './meal-display.component.html',
   styleUrl: './meal-display.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [FoodSearchComponent, MatCardModule, NutrientsComponent, MealDetailsComponent],
 })
 export class MealDisplayComponent {
