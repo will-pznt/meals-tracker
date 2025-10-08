@@ -28,7 +28,7 @@ The app was developed to **showcase my skills in modern web development** by com
 - **Frontend:** Angular 20, Angular Material  
 - **Backend:** Node.js + Express  
 - **API:** USDA FoodData Central (FDC) https://fdc.nal.usda.gov/
-- **Cloud:** Firebase  
+- **Database:** Firebase  
 - **Other Tools:** TypeScript, dotenv, ESLint, Prettier  
 
 
@@ -39,7 +39,7 @@ npm run start-prod
 
 👨‍💻 Author
 
-Built with by Willy Pezant
+Built by Willy Pezant
 
 💼 LinkedIn: (https://www.linkedin.com/in/willypezant/)
 
