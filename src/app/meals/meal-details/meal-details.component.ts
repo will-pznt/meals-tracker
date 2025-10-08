@@ -24,7 +24,7 @@ import { MinMaxDirective } from './min-max.directive';
     MinMaxDirective,
   ],
   templateUrl: './meal-details.component.html',
-  styleUrls: ['./meal-details.component.scss']
+  styleUrls: ['./meal-details.component.scss'],
 })
 export class MealDetailsComponent {
   @Input() foodItems: FoodItem[] = [];

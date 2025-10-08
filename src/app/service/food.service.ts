@@ -40,32 +40,104 @@ export class FoodService {
     return this.http.get<any>(`${this.BASE}/${fdcId}`);
   }
 
+  /**
+   * Normalizes a nutrient value to the unit defined in ESSENTIAL_NUTRIENTS_DATA.
+   * Automatically handles:
+   * - Legacy conversions (IU → µg/mg) if legacyConversion is defined
+   * - Energy units (kJ → kcal)
+   * - Mass units (mg ↔ µg, g ↔ g)
+   * - Ensures numeric output
+   */
+  private normalizeNutrientValue(
+    value: number,
+    unit: string | undefined,
+    nutrientDef: FoodNutrientParsed,
+  ): { value: number; unit: string } {
+    if (!value || !unit) return { value: 0, unit: nutrientDef.unitName };
+
+    unit = unit.trim();
+
+    // --- Apply legacy conversion formula if defined and units match ---
+    if (nutrientDef.legacyConversion && unit === nutrientDef.legacyConversion.fromUnit) {
+      value = nutrientDef.legacyConversion.formula(value);
+      unit = nutrientDef.legacyConversion.toUnit;
+    }
+
+    // --- Energy: kJ → kcal ---
+    if (unit.toLowerCase() === 'kj' && nutrientDef.unitName.toLowerCase() === 'kcal') {
+      value = value / 4.184;
+      unit = 'kcal';
+    }
+
+    // --- Mass normalization (mg ↔ µg) ---
+    const unitLower = unit.toLowerCase();
+    const targetLower = nutrientDef.unitName.toLowerCase();
+
+    if (unitLower === 'mg' && targetLower === 'µg') value *= 1000;
+    else if (unitLower === 'µg' && targetLower === 'mg') value /= 1000;
+    else if (unitLower === 'g' && targetLower === 'g')
+      value = value; // g → g no change
+    else if (unitLower === 'kg' && targetLower === 'g') value *= 1000;
+
+    // Return normalized value with the target unit
+    return { value, unit: nutrientDef.unitName };
+  }
+
   /** Sums the essential nutrients across a list of food items, scaling each nutrient by the food item's quantity.
    * If a food item does not specify a quantity, it defaults to 100 grams.
    * @param foodItems An array of FoodItem objects to sum nutrients from.
    * @returns An array of FoodNutrientParsed objects representing the summed essential nutrients.
    */
   sumEssentialNutrients(foodItems: FoodItem[]): FoodNutrientParsed[] {
-    const summedNutrients = ESSENTIAL_NUTRIENTS_DATA.map((nutrient) => ({
-      ...nutrient,
-      value: 0,
-    }));
+    const summedNutrients = ESSENTIAL_NUTRIENTS_DATA.map((n) => ({ ...n, value: 0 }));
 
     for (const item of foodItems) {
       const quantity = item.quantity ?? 100;
 
+      const exactMatches: { nutrient: any; match: FoodNutrientParsed }[] = [];
+      const aliasCandidates: { nutrient: any; match: FoodNutrientParsed }[] = [];
+
       for (const nutrient of item.foodNutrients || []) {
-        const match = summedNutrients.find(
-          (en) =>
-            en.nutrientName === nutrient.nutrientName && en.unitName.toLowerCase() === nutrient.unitName.toLowerCase(),
+        if (!nutrient.nutrientName) continue;
+
+        // --- Only take kcal for Energy, skip kJ ---
+        if (nutrient.nutrientName.toLowerCase().includes('energy') && nutrient.unitName?.toLowerCase() === 'kj') {
+          continue;
+        }
+
+        const nutrientNameLower = nutrient.nutrientName.toLowerCase().trim();
+
+        const exactMatch = summedNutrients.find((en) => en.nutrientName.toLowerCase().trim() === nutrientNameLower);
+        if (exactMatch) {
+          exactMatches.push({ nutrient, match: exactMatch });
+          continue;
+        }
+
+        const aliasMatch = summedNutrients.find((en) =>
+          (en.aliases ?? []).some((alias) => alias.toLowerCase().trim() === nutrientNameLower),
         );
-        if (!match) continue;
-        const scaledValue = ((nutrient.value || 0) * quantity) / 100;
-        match.value += scaledValue;
+        if (aliasMatch) aliasCandidates.push({ nutrient, match: aliasMatch });
+      }
+
+      // --- Apply exact matches first ---
+      for (const { nutrient, match } of exactMatches) {
+        const { value } = this.normalizeNutrientValue(nutrient.value || 0, nutrient.unitName, match);
+        const increment = (value * quantity) / 100;
+        match.value += increment;
+      }
+
+      // --- Apply aliases only if no exact match exists ---
+      for (const { nutrient, match } of aliasCandidates) {
+        const alreadyMatched = exactMatches.some((em) => em.match.nutrientName === match.nutrientName);
+        if (alreadyMatched) continue;
+
+        const { value } = this.normalizeNutrientValue(nutrient.value || 0, nutrient.unitName, match);
+        const increment = (value * quantity) / 100;
+        match.value += increment;
       }
     }
 
-    // Round each nutrient's value once at the end
+    // --- Round values ---
     for (const nutrient of summedNutrients) {
       nutrient.value = parseFloat(nutrient.value.toFixed(2));
     }
