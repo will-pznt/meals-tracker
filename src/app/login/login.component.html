@@ -1,37 +1,33 @@
 <div class="auth-container">
   <mat-card>
-    <h2>{{ isRegisterMode ? 'Register' : 'Login' }}</h2>
+    <h2>{{ isRegisterMode() ? 'Register' : 'Login' }}</h2>
 
     @if (loading()) {
       <mat-spinner></mat-spinner>
     } @else {
-      <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+      <form (submit)="onSubmit($event)">
         <mat-form-field>
           <mat-label>Email</mat-label>
-          <input matInput formControlName="email" type="email" required />
-          @if (authForm.get('email')?.invalid && authForm.get('email')?.touched) {
-            <mat-error> Please enter a valid email </mat-error>
+          <input matInput type="email" [formField]="authForm.email" />
+          @if (authForm.email().invalid()) {
+            <mat-error>{{ authForm.email().errors()[0]?.message }}</mat-error>
           }
         </mat-form-field>
 
         <mat-form-field>
           <mat-label>Password</mat-label>
-          <input matInput formControlName="password" type="password" required />
-          @if (authForm.get('password')?.invalid && authForm.get('password')?.touched) {
-            <mat-error> Password is required </mat-error>
+          <input matInput type="password" [formField]="authForm.password" />
+          @if (authForm.password().invalid()) {
+            <mat-error>{{ authForm.password().errors()[0]?.message }}</mat-error>
           }
         </mat-form-field>
 
-        @if (isRegisterMode) {
+        @if (isRegisterMode()) {
           <mat-form-field>
             <mat-label>Confirm Password</mat-label>
-            <input matInput formControlName="confirmPassword" type="password" required />
-
-            @if (authForm.get('confirmPassword')?.hasError('required')) {
-              <mat-error> Confirm Password is required </mat-error>
-            }
-            @if (authForm.get('confirmPassword')?.dirty && authForm.hasError('mismatch')) {
-              <mat-error> Passwords do not match </mat-error>
+            <input matInput type="password" [formField]="authForm.confirmPassword" />
+            @if (authForm.confirmPassword().invalid()) {
+              <mat-error>{{ authForm.confirmPassword().errors()[0]?.message }}</mat-error>
             }
           </mat-form-field>
         }
@@ -40,14 +36,14 @@
           <p class="auth-error">{{ errorMessage() }}</p>
         }
 
-        <button mat-raised-button color="primary" type="submit">
-          {{ isRegisterMode ? 'Register' : 'Login' }}
+        <button mat-raised-button color="primary" type="submit" [disabled]="authForm().invalid() || loading()">
+          {{ isRegisterMode() ? 'Register' : 'Login' }}
         </button>
       </form>
 
       <div class="toggle-link">
         <a (click)="toggleMode()">
-          {{ isRegisterMode ? 'Already have an account? Login' : 'Create an account' }}
+          {{ isRegisterMode() ? 'Already have an account? Login' : 'Create an account' }}
         </a>
       </div>
     }

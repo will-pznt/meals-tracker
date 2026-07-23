@@ -80,10 +80,9 @@
     margin: 1rem auto;
   }
 
-  .auth-error {
-    color: #d32f2f;
-    font-size: 0.875rem;
-    text-align: center;
-    margin: 0;
+  mat-error {
+    font-size: 12px;
+    font-family: Roboto;
+    font-weight: 400;
   }
 }

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -8,9 +7,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../service/auth-service.service';
+import { debounce, email, form, FormField, minLength, required, submit, validate } from '@angular/forms/signals';
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/invalid-credential': 'Incorrect email or password.',
@@ -22,117 +22,95 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/too-many-requests': 'Too many attempts. Please try again later.',
 };
 
+interface LoginData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
 @Component({
   selector: 'app-login',
   imports: [
+    FormField,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule,
     CommonModule,
     MatProgressSpinnerModule,
-    ReactiveFormsModule,
     MatDialogModule,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  authForm: FormGroup;
-  isRegisterMode = false;
+  isRegisterMode = signal(false);
   loading = signal(false);
   errorMessage = signal<string | null>(null);
 
-  constructor() {
-    this.authForm = this.fb.group(
-      {
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', Validators.required],
-        confirmPassword: [''],
-      },
-      { validators: this.passwordMatchValidator },
-    );
+  loginModel = signal<LoginData>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
 
-    // Update validity on every keystroke
-    this.authForm
-      .get('password')
-      ?.valueChanges.subscribe(() => this.authForm.updateValueAndValidity({ onlySelf: false }));
-    this.authForm
-      .get('confirmPassword')
-      ?.valueChanges.subscribe(() => this.authForm.updateValueAndValidity({ onlySelf: false }));
-  }
+  authForm = form(this.loginModel, (schemaPath) => {
+    debounce(schemaPath.email, 500);
+    required(schemaPath.email, { message: 'Email is required' });
+    email(schemaPath.email, { message: 'Email is invalid' });
 
-  /**
-   * Validate that password and confirm password match
-   * @param group
-   * @returns
-   */
-  passwordMatchValidator(group: AbstractControl): { [key: string]: boolean } | null {
-    const password = group.get('password')?.value;
-    const confirm = group.get('confirmPassword')?.value;
+    required(schemaPath.password, { message: 'Password is required' });
+    minLength(schemaPath.password, 6, { message: 'Password should be at least 6 characters' });
 
-    if (!confirm || !password) return null;
-    return password === confirm ? null : { mismatch: true };
-  }
+    required(schemaPath.confirmPassword, {
+      when: () => this.isRegisterMode(),
+      message: 'Confirm password is required',
+    });
+
+    validate(schemaPath.confirmPassword, ({ value, valueOf }) => {
+      if (!this.isRegisterMode()) return undefined;
+      if (value() !== valueOf(schemaPath.password)) {
+        return { kind: 'mismatch', message: 'Passwords do not match' };
+      }
+      return undefined;
+    });
+  });
 
   /**
    * Toggle between login and register modes
    */
   toggleMode(): void {
-    this.isRegisterMode = !this.isRegisterMode;
+    this.isRegisterMode.update((v) => !v);
     this.errorMessage.set(null);
-    this.authForm.get('confirmPassword')?.setValidators(this.isRegisterMode ? Validators.required : null);
-    this.authForm.get('confirmPassword')?.updateValueAndValidity();
   }
 
   /**
    * Handle form submission for login or registration
-   * @returns
+   * @param event
    */
-  onSubmit(): void {
-    this.authForm.markAllAsTouched();
+  onSubmit(event: Event): void {
+    event.preventDefault();
     this.errorMessage.set(null);
 
-    const email = this.authForm.get('email')?.value;
-    const password = this.authForm.get('password')?.value;
-
-    if (this.isRegisterMode) {
-      if (this.authForm.hasError('mismatch')) return;
+    submit(this.authForm, async () => {
+      const { email, password } = this.loginModel();
       this.loading.set(true);
 
-      // Register then auto-login
-      this.authService
-        .registerWithEmail(email, password)
-        .pipe(switchMap(() => this.authService.login(email, password)))
-        .subscribe({
-          next: () => {
-            this.loading.set(false);
-            this.router.navigate(['/home']);
-          },
-          error: (error: unknown) => {
-            this.loading.set(false);
-            this.errorMessage.set(this.toErrorMessage(error));
-          },
-        });
-    } else {
-      if (!this.authForm.valid) return;
-      this.loading.set(true);
-
-      this.authService.login(email, password).subscribe({
-        next: () => {
-          this.loading.set(false);
-          this.router.navigate(['/home']);
-        },
-        error: (error: unknown) => {
-          this.loading.set(false);
-          this.errorMessage.set(this.toErrorMessage(error));
-        },
-      });
-    }
+      try {
+        if (this.isRegisterMode()) {
+          await firstValueFrom(this.authService.registerWithEmail(email, password));
+        }
+        await firstValueFrom(this.authService.login(email, password));
+        this.router.navigate(['/home']);
+      } catch (error) {
+        this.errorMessage.set(this.toErrorMessage(error));
+      } finally {
+        this.loading.set(false);
+      }
+    });
   }
 
   /**
