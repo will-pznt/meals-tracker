@@ -34,7 +34,7 @@
 </div>
 
 <div class="meal-container">
-  @if (loading) {
+  @if (loading()) {
     <mat-spinner class="spinner"></mat-spinner>
   } @else {
     @if (selectedMeal !== 'daily') {

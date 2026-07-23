@@ -1,23 +1,48 @@
-import { Injectable, inject } from '@angular/core';
-import { Auth, browserSessionPersistence, signInWithEmailAndPassword, signOut, user, User } from '@angular/fire/auth';
-import { createUserWithEmailAndPassword, setPersistence, UserCredential } from 'firebase/auth';
-import { BehaviorSubject, from, Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
+import { Injectable, NgZone, inject, PLATFORM_ID } from '@angular/core';
+import { Auth, User, UserCredential } from '@angular/fire/auth';
+
+import {
+  browserSessionPersistence,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  setPersistence,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import { BehaviorSubject, from, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private firebaseAuth = inject(Auth);
+  private zone = inject(NgZone);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   user: Observable<User | null>;
   private initialized = new BehaviorSubject<boolean>(false);
 
+  private persistenceReady: Promise<void>;
+
   constructor() {
-    this.setSessionStoragePersistence();
-    this.user = user(this.firebaseAuth);
+    this.persistenceReady = this.setSessionStoragePersistence();
+    this.user = this.buildUserStream();
     this.user.subscribe(() => {
       this.initialized.next(true);
     });
+  }
+
+
+  private buildUserStream(): Observable<User | null> {
+    if (!this.isBrowser) return of(null);
+    return new Observable<User | null>((subscriber) =>
+      onAuthStateChanged(
+        this.firebaseAuth,
+        (currentUser) => this.zone.run(() => subscriber.next(currentUser)),
+        (error) => this.zone.run(() => subscriber.error(error)),
+      ),
+    ).pipe(shareReplay({ bufferSize: 1, refCount: false }));
   }
 
   /**
@@ -30,11 +55,13 @@ export class AuthService {
   }
 
   /**
-   * Set Firebase Auth persistence to session storage
-   * This keeps the user logged in across page reloads, but logs them out when the browser/tab is closed
+   * Set Firebase Auth persistence to session storage.
+   * This keeps the user logged in across page reloads, but logs them out when the browser/tab is closed.
+   * Browser-only: `browserSessionPersistence` relies on `sessionStorage`, which doesn't exist during SSR/prerendering.
    */
-  private setSessionStoragePersistence(): void {
-    setPersistence(this.firebaseAuth, browserSessionPersistence);
+  private setSessionStoragePersistence(): Promise<void> {
+    if (!this.isBrowser) return Promise.resolve();
+    return setPersistence(this.firebaseAuth, browserSessionPersistence);
   }
 
   /**
@@ -46,13 +73,17 @@ export class AuthService {
   }
 
   /**
-   * Get the current user's ID token, or null if not logged in
-   * @returns Promise that resolves to the ID token or null
+   * Get the current user's ID token, or null if not logged in.
+   * Waits for the auth state to be known instead of reading `firebaseAuth.currentUser`
+   * synchronously, which can be null immediately after a page reload/SSR hydration
+   * before Firebase has finished restoring the session.
+   * @returns Observable emitting the ID token or null
    */
-  async getIdToken(): Promise<string | null> {
-    const user = this.firebaseAuth.currentUser;
-    if (!user) return null;
-    return user.getIdToken();
+  getIdToken(): Observable<string | null> {
+    return this.user.pipe(
+      take(1),
+      switchMap((currentUser) => (currentUser ? from(currentUser.getIdToken()) : of(null))),
+    );
   }
 
   /**
@@ -62,7 +93,10 @@ export class AuthService {
    * @returns Observable that completes when registration is successful
    */
   registerWithEmail(email: string, password: string): Observable<UserCredential> {
-    return from(createUserWithEmailAndPassword(this.firebaseAuth, email, password));
+    const promise = this.persistenceReady.then(() =>
+      createUserWithEmailAndPassword(this.firebaseAuth, email, password),
+    );
+    return from(promise);
   }
 
   /**
@@ -72,14 +106,16 @@ export class AuthService {
    * @returns Observable that completes when login is successful
    */
   login(email: string, password: string): Observable<void> {
-    const promise = signInWithEmailAndPassword(this.firebaseAuth, email, password).then(() => {});
+    const promise = this.persistenceReady.then(() =>
+      signInWithEmailAndPassword(this.firebaseAuth, email, password).then(() => { }),
+    );
     return from(promise);
   }
 
   /** Logout the current user */
   logout(): Observable<void> {
     const promise = signOut(this.firebaseAuth).then(() => {
-      sessionStorage.clear();
+      if (this.isBrowser) sessionStorage.clear();
     });
     return from(promise);
   }

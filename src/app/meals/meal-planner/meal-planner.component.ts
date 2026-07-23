@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -50,7 +50,7 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   gender: 'men' | 'women' = 'men';
   sumEssentialNutrients: FoodNutrientParsed[] = [];
 
-  loading = false;
+  protected loading = signal(true);
 
   mealFoodItems: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]> = {
     breakfast: [],
@@ -59,7 +59,7 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   };
 
   private loadSub?: Subscription;
-  constructor() {}
+  constructor() { }
 
   get foodItems(): FoodItem[] {
     if (this.selectedMeal === 'daily') {
@@ -181,19 +181,19 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
    * Load meals for selected date
    */
   private loadMeals(): void {
-    this.loading = true;
+    this.loading.set(true);
     const dateIso = this.formatDateLocal(this.selectedDate);
 
     this.loadSub?.unsubscribe();
     this.loadSub = this.mealService.getMealsByDate(dateIso).subscribe({
       next: (meals) => {
         this.mealFoodItems = meals;
-        this.loading = false;
+        this.loading.set(false);
         this.recalculateNutrients();
       },
       error: () => {
         this.mealFoodItems = { breakfast: [], lunch: [], dinner: [] };
-        this.loading = false;
+        this.loading.set(false);
       },
     });
   }

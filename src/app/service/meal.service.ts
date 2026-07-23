@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
-import { from, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { FoodItem } from '../data-models/FoodItem';
 import { Meal } from '../data-models/Meal';
+import { AuthService } from './auth-service.service';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 })
 export class MealService {
   private http = inject(HttpClient);
-  private auth = inject(Auth);
+  private authService = inject(AuthService);
 
   private apiUrl = environment.apiUrl;
 
@@ -22,7 +22,7 @@ export class MealService {
    * @returns Observable emitting HttpHeaders with Authorization token
    */
   private getAuthHeaders(): Observable<HttpHeaders> {
-    return from(this.auth.currentUser?.getIdToken() ?? Promise.resolve('')).pipe(
+    return this.authService.getIdToken().pipe(
       switchMap((token) => {
         if (!token) throw new Error('User not authenticated');
         return [new HttpHeaders({ Authorization: `Bearer ${token}` })];
@@ -50,7 +50,7 @@ export class MealService {
     return this.getAuthHeaders().pipe(
       switchMap((headers) => this.http.get<Meal[]>(`${this.apiUrl}/meals/${date}`, { headers })),
       // transform API response → mealFoodItems structure
-      map((meals) => {
+      map((meals: any[]) => {
         const mealFoodItems: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]> = {
           breakfast: [],
           lunch: [],
@@ -59,7 +59,7 @@ export class MealService {
 
         meals.forEach((meal) => {
           const key = meal.name as 'breakfast' | 'lunch' | 'dinner';
-          mealFoodItems[key] = (meal.items || []).map((f) => ({
+          mealFoodItems[key] = (meal.items || []).map((f: { fdcId: any; description: any; quantity: any; essentialNutrients: any; }) => ({
             fdcId: f.fdcId,
             description: f.description || '',
             quantity: f.quantity,

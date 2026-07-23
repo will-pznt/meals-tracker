@@ -17,9 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": ["faye-websocket", "@firebase/database", "node-domexception",
-  "web-streams-polyfill",
-  "fetch-blob"],
+            "allowedCommonJsDependencies": ["faye-websocket", "@firebase/database"],
             "outputPath": "dist/meal-nutrition-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
@@ -32,10 +30,13 @@
                 "input": "public"
               }
             ],
+            "security": {
+              "allowedHosts": ["localhost", "127.0.0.1"]
+            },
             "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
             "scripts": [],
             "server": "src/main.server.ts",
-            "prerender": true,
+            "outputMode": "server",
             "ssr": {
               "entry": "src/server.ts"
             }

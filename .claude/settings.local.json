@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm -v)",
+      "Bash(node -e \"console.log\\('@angular/fire', require\\('./node_modules/@angular/fire/package.json'\\).version\\); console.log\\('firebase', require\\('./node_modules/firebase/package.json'\\).version\\)\")",
+      "WebSearch"
+    ]
+  }
+}

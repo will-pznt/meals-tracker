@@ -11,9 +11,9 @@ export class MinMaxDirective {
   @Input()
   public max!: number;
 
-  constructor(private ref: ElementRef) {}
+  constructor(private ref: ElementRef) { }
 
-  @HostListener('input', ['$event'])
+  @HostListener('input')
   public onInput(): void {
     let val = parseInt(this.ref.nativeElement.value);
     if (this.max !== null && this.max !== undefined && val >= this.max)

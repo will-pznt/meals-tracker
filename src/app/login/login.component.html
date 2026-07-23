@@ -2,7 +2,7 @@
   <mat-card>
     <h2>{{ isRegisterMode ? 'Register' : 'Login' }}</h2>
 
-    @if (loading) {
+    @if (loading()) {
       <mat-spinner></mat-spinner>
     } @else {
       <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
@@ -34,6 +34,10 @@
               <mat-error> Passwords do not match </mat-error>
             }
           </mat-form-field>
+        }
+
+        @if (errorMessage()) {
+          <p class="auth-error">{{ errorMessage() }}</p>
         }
 
         <button mat-raised-button color="primary" type="submit">

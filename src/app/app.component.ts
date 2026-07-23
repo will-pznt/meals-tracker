@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -13,7 +13,6 @@ import { AuthService } from './service/auth-service.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  standalone: true,
   styleUrl: './app.component.scss',
   imports: [
     CommonModule,
@@ -30,12 +29,12 @@ export class AppComponent {
   private auth = inject(AuthService);
 
   title = 'Daily Nutrient Requirements';
-  loading = true;
+  protected loading = signal(true);
 
   constructor() {
     this.auth.user.subscribe({
-      next: () => (this.loading = false),
-      error: () => (this.loading = false),
+      next: () => this.loading.set(false),
+      error: () => this.loading.set(false),
     });
   }
 }
