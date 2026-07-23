@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, output } from '@angular/core';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -26,7 +26,6 @@ import { FoodService } from '../../service/food.service';
   selector: 'app-food-search',
   templateUrl: './food-search.component.html',
   styleUrls: ['./food-search.component.scss'],
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -41,7 +40,7 @@ import { FoodService } from '../../service/food.service';
 export class FoodSearchComponent implements OnInit {
   private foodService = inject(FoodService);
 
-  @Output() foodSelected = new EventEmitter<FoodItem>();
+  readonly foodSelected = output<FoodItem>();
 
   searchControl = new FormControl('');
   filteredFoods$: Observable<FoodItem[]> = of([]);

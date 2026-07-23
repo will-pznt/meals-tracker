@@ -24,7 +24,6 @@ const AUTH_ERROR_MESSAGES: Record<string, string> = {
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [
     MatFormFieldModule,
     MatInputModule,

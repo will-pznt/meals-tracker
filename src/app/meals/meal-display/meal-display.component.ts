@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, Input, inject, input, output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FoodItem } from '../../data-models/FoodItem';
@@ -11,7 +11,6 @@ import { NutrientsComponent } from '../nutrients/nutrients.component';
 
 @Component({
   selector: 'app-meal-display',
-  standalone: true,
   templateUrl: './meal-display.component.html',
   styleUrl: './meal-display.component.scss',
   imports: [FoodSearchComponent, MatCardModule, NutrientsComponent, MealDetailsComponent],
@@ -21,18 +20,19 @@ export class MealDisplayComponent {
   private mealService = inject(MealService);
   private snackBar = inject(MatSnackBar);
 
-  @Input() selectedMeal: 'breakfast' | 'lunch' | 'dinner' = 'breakfast';
-  @Input() selectedDate!: Date;
-  @Input() mealFoodItems!: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]>;
+  readonly selectedMeal = input<'breakfast' | 'lunch' | 'dinner'>('breakfast');
+  readonly selectedDate = input.required<Date>();
+  readonly mealFoodItems = input.required<Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]>>();
+
   @Input() sumEssentialNutrients: FoodNutrientParsed[] = [];
 
-  @Output() addingFoodToMeal = new EventEmitter<FoodItem>();
-  @Output() updatingQuantityFood = new EventEmitter<FoodItem>();
+  readonly addingFoodToMeal = output<FoodItem>();
+  readonly updatingQuantityFood = output<FoodItem>();
 
-  constructor() {}
+  constructor() { }
 
   get foodItems(): FoodItem[] {
-    return this.mealFoodItems[this.selectedMeal] || [];
+    return this.mealFoodItems()[this.selectedMeal()] || [];
   }
 
   /**
@@ -63,7 +63,7 @@ export class MealDisplayComponent {
     }
     this.mealService.deleteFoodItemMeal(foodItem.mealId, foodItem.fdcId).subscribe({
       next: () => {
-        this.mealFoodItems[this.selectedMeal] = this.foodItems.filter((item) => item.fdcId !== foodItem.fdcId);
+        this.mealFoodItems()[this.selectedMeal()] = this.foodItems.filter((item) => item.fdcId !== foodItem.fdcId);
         this.sumEssentialNutrients = this.foodService.sumEssentialNutrients(this.foodItems);
       },
       error: () => {

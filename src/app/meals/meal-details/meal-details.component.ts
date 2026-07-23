@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -12,7 +12,6 @@ import { MinMaxDirective } from './min-max.directive';
 
 @Component({
   selector: 'app-meal-details',
-  standalone: true,
   imports: [
     CommonModule,
     MatTableModule,
@@ -27,9 +26,9 @@ import { MinMaxDirective } from './min-max.directive';
   styleUrls: ['./meal-details.component.scss'],
 })
 export class MealDetailsComponent {
-  @Input() foodItems: FoodItem[] = [];
-  @Output() quantityFoodItemEvent = new EventEmitter<FoodItem>();
-  @Output() deleteFoodItemEvent = new EventEmitter<FoodItem>();
+  readonly foodItems = input<FoodItem[]>([]);
+  readonly quantityFoodItemEvent = output<FoodItem>();
+  readonly deleteFoodItemEvent = output<FoodItem>();
 
   private quantityChangeSubject = new Subject<FoodItem>();
   private lastEmittedQuantities = new Map<number, number>();

@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { FoodItem } from '../data-models/FoodItem';
@@ -7,16 +7,14 @@ import { Meal } from '../data-models/Meal';
 import { AuthService } from './auth-service.service';
 import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class MealService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
   private apiUrl = environment.apiUrl;
 
-  constructor() {}
+  constructor() { }
 
   /** Helper method to get authorization headers with the current user's ID token.
    * @returns Observable emitting HttpHeaders with Authorization token

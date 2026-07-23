@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges, inject } from '@angular/core';
+import { Component, OnDestroy, inject, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
 
@@ -9,15 +9,14 @@ import { GenderService } from '../../service/gender.service';
 
 @Component({
   selector: 'app-nutrients',
-  standalone: true,
   imports: [CommonModule, MatCardModule],
   templateUrl: './nutrients.component.html',
   styleUrl: './nutrients.component.scss',
 })
-export class NutrientsComponent implements OnChanges, OnDestroy {
+export class NutrientsComponent implements OnDestroy {
   private genderService = inject(GenderService);
 
-  @Input() nutrients: FoodNutrientParsed[] | undefined;
+  readonly nutrients = input<FoodNutrientParsed[]>();
 
   nutrientIcons = NUTRIENT_ICONS;
   gender: string | undefined;
@@ -52,11 +51,5 @@ export class NutrientsComponent implements OnChanges, OnDestroy {
     if (!daily || daily === 0) return 0;
     const val = nutrient.value || 0;
     return Math.min(100, Math.round((val / daily) * 100));
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['gender'] && changes['gender'].currentValue) {
-      this.genderService.setGender(changes['gender'].currentValue);
-    }
   }
 }

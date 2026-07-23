@@ -1,6 +1,6 @@
 <mat-card class="meal-card" appearance="outlined">
   <mat-card-content>
-    <div class="meal-title">{{ selectedMeal }}</div>
+    <div class="meal-title">{{ selectedMeal() }}</div>
     <div class="sub-header">
       <app-food-search (foodSelected)="addFood($event)"></app-food-search>
     </div>

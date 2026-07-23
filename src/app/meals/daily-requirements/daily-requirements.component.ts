@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnDestroy, inject } from '@angular/core';
+import { Component, OnChanges, OnDestroy, inject, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Subscription } from 'rxjs';
 
@@ -13,7 +13,6 @@ import { NutrientsComponent } from '../nutrients/nutrients.component';
 
 @Component({
   selector: 'app-daily-requirements',
-  standalone: true,
   imports: [MatCardModule, NutrientsComponent, CommonModule],
   templateUrl: './daily-requirements.component.html',
   styleUrl: './daily-requirements.component.scss',
@@ -22,11 +21,11 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
   private foodService = inject(FoodService);
   private genderService = inject(GenderService);
 
-  @Input() mealFoodItems: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]> = {
+  readonly mealFoodItems = input<Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]>>({
     breakfast: [],
     lunch: [],
     dinner: [],
-  };
+  });
 
   gender: 'men' | 'women' | undefined;
 
@@ -53,9 +52,9 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
    */
   private updateDailyNutrients(): void {
     const allItems: FoodItem[] = [
-      ...this.mealFoodItems.breakfast,
-      ...this.mealFoodItems.lunch,
-      ...this.mealFoodItems.dinner,
+      ...this.mealFoodItems().breakfast,
+      ...this.mealFoodItems().lunch,
+      ...this.mealFoodItems().dinner,
     ];
 
     this.dailyNutrients = this.foodService.sumEssentialNutrients(allItems);

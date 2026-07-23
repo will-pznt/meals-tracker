@@ -1,20 +1,18 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { map, Observable } from 'rxjs';
 
 import { ESSENTIAL_NUTRIENTS_DATA } from '../data-models/ESSENTIAL_NUTRIENTS_DATA';
 import { FoodItem } from '../data-models/FoodItem';
 import { FoodNutrientParsed } from '../data-models/FoodNutrientParsed';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class FoodService {
   private http = inject(HttpClient);
 
   private BASE = '/api/foods';
 
-  constructor() {}
+  constructor() { }
 
   /** Searches for foods using the provided query string.
    * Each returned food item is assigned a default quantity of 100 grams.

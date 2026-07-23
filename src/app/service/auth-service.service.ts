@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, NgZone, inject, PLATFORM_ID } from '@angular/core';
+import { NgZone, inject, PLATFORM_ID, Service } from '@angular/core';
 import { Auth, User, UserCredential } from '@angular/fire/auth';
 
 import {
@@ -12,9 +12,7 @@ import {
 } from 'firebase/auth';
 import { BehaviorSubject, from, Observable, of, shareReplay, switchMap, take } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthService {
   private firebaseAuth = inject(Auth);
   private zone = inject(NgZone);

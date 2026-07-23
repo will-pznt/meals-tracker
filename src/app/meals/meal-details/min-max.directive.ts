@@ -1,24 +1,21 @@
-import { Directive, Input, ElementRef, HostListener } from '@angular/core';
+import { Directive, ElementRef, HostListener, inject, input } from '@angular/core';
 
 @Directive({
   selector: '[minMax]',
-  standalone: true,
 })
 export class MinMaxDirective {
-  @Input()
-  public min!: number;
+  private ref = inject(ElementRef);
 
-  @Input()
-  public max!: number;
+  public readonly min = input.required<number>();
 
-  constructor(private ref: ElementRef) { }
+  public readonly max = input.required<number>();
 
   @HostListener('input')
   public onInput(): void {
     let val = parseInt(this.ref.nativeElement.value);
-    if (this.max !== null && this.max !== undefined && val >= this.max)
-      this.ref.nativeElement.value = this.max.toString();
-    else if (this.min !== null && this.min !== undefined && val <= this.min)
-      this.ref.nativeElement.value = this.min.toString();
+    const max = this.max();
+    const min = this.min();
+    if (max !== null && max !== undefined && val >= max) this.ref.nativeElement.value = max.toString();
+    else if (min !== null && min !== undefined && val <= min) this.ref.nativeElement.value = min.toString();
   }
 }

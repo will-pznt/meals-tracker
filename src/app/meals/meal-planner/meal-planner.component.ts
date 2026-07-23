@@ -22,7 +22,6 @@ import { MealDisplayComponent } from '../meal-display/meal-display.component';
 
 @Component({
   selector: 'app-meal-selector',
-  standalone: true,
   imports: [
     MealDisplayComponent,
     DailyRequirementsComponent,

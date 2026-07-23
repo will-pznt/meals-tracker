@@ -1,6 +1,6 @@
-@if (nutrients) {
+@if (nutrients()) {
   <div class="flex-container">
-    @for (nutrient of nutrients; track nutrient.nutrientName) {
+    @for (nutrient of nutrients(); track nutrient.nutrientName) {
       <div class="item-container">
         <span class="label">
           <span class="icon">{{ nutrientIcons[nutrient.nutrientName] || '❓' }}</span>
