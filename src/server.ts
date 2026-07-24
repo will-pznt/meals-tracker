@@ -33,21 +33,30 @@ app.get('/api/foods/search', async (req, res) => {
     res.status(400).json({ error: 'Missing query' });
     return;
   }
+
   try {
-    const response = await fetch(
-      `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(
-        query,
-      )}&dataType=Foundation,SR Legacy&pageSize=10`,
-    );
-    res.json(await response.json());
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch USDA data' });
+    const dataTypes = encodeURIComponent('Foundation,SR Legacy');
+    const targetUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(query)}&dataType=${dataTypes}&pageSize=10`;
+
+    const response = await fetch(targetUrl);
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      console.error(`[USDA Search Error ${response.status}]:`, errBody);
+      res.status(response.status).json({ error: 'USDA API returned error', details: errBody });
+      return;
+    }
+
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    console.error('[Server Fetch Exception]:', err);
+    res.status(500).json({ error: 'Failed to fetch USDA data', details: String(err) });
   }
 });
 
 /**
- * USDA API proxy: food details by FDC id. Cached in-memory since meal loads
- * re-request the same items repeatedly (e.g. revisiting a date).
+ * USDA API proxy: food details by FDC id.
  */
 app.get('/api/foods/:fdcId', async (req, res) => {
   const { fdcId } = req.params;
@@ -56,15 +65,26 @@ app.get('/api/foods/:fdcId', async (req, res) => {
     res.json(cached);
     return;
   }
+
   try {
-    const response = await fetch(
-      `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}&dataType=Foundation,SR Legacy`,
-    );
+    const dataTypes = encodeURIComponent('Foundation,SR Legacy');
+    const targetUrl = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}&dataType=${dataTypes}`;
+
+    const response = await fetch(targetUrl);
+
+    if (!response.ok) {
+      const errBody = await response.text();
+      console.error(`[USDA Detail Error ${response.status}]:`, errBody);
+      res.status(response.status).json({ error: 'USDA API returned error', details: errBody });
+      return;
+    }
+
     const data = await response.json();
     foodDetailCache.set(fdcId, data);
     res.json(data);
-  } catch {
-    res.status(500).json({ error: 'Failed to fetch USDA data' });
+  } catch (err) {
+    console.error('[Server Fetch Exception]:', err);
+    res.status(500).json({ error: 'Failed to fetch USDA data', details: String(err) });
   }
 });
 
