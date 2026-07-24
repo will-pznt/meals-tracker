@@ -1,0 +1,4 @@
+# apphosting.yaml
+scripts:
+  buildCommand: npm run build:prod
+  runCommand: npm run serve:ssr:meal-nutrition-app
