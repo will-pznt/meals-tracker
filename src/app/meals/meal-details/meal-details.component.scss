@@ -50,15 +50,15 @@ tr.row:not(.foodItem-expanded-row):active {
   align-items: center;
   justify-content: center;
   padding: 3rem 1rem;
-  border: 2px dashed #ccc;
-  border-radius: 12px;
-  background-color: #fafafa;
-  color: #555;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface-alt);
+  color: var(--text-muted);
   text-align: center;
   gap: 1rem;
 
   .empty-icon {
-    color: #42a5f5;
+    color: var(--brand);
     transform: scale(2);
   }
 

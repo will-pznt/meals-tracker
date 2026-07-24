@@ -1,7 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component, OnChanges, OnDestroy, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { Subscription } from 'rxjs';
 
 import { FoodItem } from '../../data-models/FoodItem';
 import { FoodNutrientParsed } from '../../data-models/FoodNutrientParsed';
@@ -13,11 +11,11 @@ import { NutrientsComponent } from '../nutrients/nutrients.component';
 
 @Component({
   selector: 'app-daily-requirements',
-  imports: [MatCardModule, NutrientsComponent, CommonModule],
+  imports: [MatCardModule, NutrientsComponent],
   templateUrl: './daily-requirements.component.html',
   styleUrl: './daily-requirements.component.scss',
 })
-export class DailyRequirementsComponent implements OnChanges, OnDestroy {
+export class DailyRequirementsComponent {
   private foodService = inject(FoodService);
   private genderService = inject(GenderService);
 
@@ -27,47 +25,21 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
     dinner: [],
   });
 
-  gender: 'men' | 'women' | undefined;
+  /** Recomputes whenever the meal contents change. */
+  readonly dailyNutrients = computed<FoodNutrientParsed[]>(() => {
+    const items = this.mealFoodItems();
+    const allItems: FoodItem[] = [...items.breakfast, ...items.lunch, ...items.dinner];
+    return this.foodService.sumEssentialNutrients(allItems);
+  });
 
-  dailyNutrients: FoodNutrientParsed[] = [];
-  lowNutrientsRecommendations: NutrientRecommendation[] = [];
+  /** Recomputes whenever the daily nutrients or the target gender profile change. */
+  readonly lowNutrientsRecommendations = computed<NutrientRecommendation[]>(() => {
+    const gender = this.genderService.gender();
+    const targetFor = (n: FoodNutrientParsed) => (gender === 'men' ? (n.dailyValueMen ?? 0) : (n.dailyValueWomen ?? 0));
 
-  private sub?: Subscription;
-
-  constructor() {
-    this.genderService.genderChanges.subscribe((g) => (this.gender = g));
-  }
-
-  ngOnChanges(): void {
-    this.updateDailyNutrients();
-    this.updateLowNutrientsRecommendations();
-  }
-
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-  }
-
-  /**
-   * Update daily nutrients based on all meal food items
-   */
-  private updateDailyNutrients(): void {
-    const allItems: FoodItem[] = [
-      ...this.mealFoodItems().breakfast,
-      ...this.mealFoodItems().lunch,
-      ...this.mealFoodItems().dinner,
-    ];
-
-    this.dailyNutrients = this.foodService.sumEssentialNutrients(allItems);
-  }
-
-  /**
-   * Update low nutrients recommendations based on daily nutrients
-   */
-  private updateLowNutrientsRecommendations(): void {
-    this.lowNutrientsRecommendations = [];
-
-    for (const nutrient of this.dailyNutrients) {
-      const dailyTarget = this.gender === 'men' ? (nutrient.dailyValueMen ?? 0) : (nutrient.dailyValueWomen ?? 0);
+    const recommendations: NutrientRecommendation[] = [];
+    for (const nutrient of this.dailyNutrients()) {
+      const dailyTarget = targetFor(nutrient);
       if (!dailyTarget) continue;
 
       // only show if < 70% of daily target
@@ -77,20 +49,17 @@ export class DailyRequirementsComponent implements OnChanges, OnDestroy {
           .map((f) => f.foodName)
           .slice(0, 5);
 
-        this.lowNutrientsRecommendations.push({
-          nutrient,
-          foods: topFoods,
-        });
+        recommendations.push({ nutrient, foods: topFoods });
       }
     }
 
     // sort by % of daily target ascending (most lacking first)
-    this.lowNutrientsRecommendations.sort((a, b) => {
-      const aPercent =
-        (a.nutrient.value / (this.gender === 'men' ? a.nutrient.dailyValueMen! : a.nutrient.dailyValueWomen!)) * 100;
-      const bPercent =
-        (b.nutrient.value / (this.gender === 'men' ? b.nutrient.dailyValueMen! : b.nutrient.dailyValueWomen!)) * 100;
+    recommendations.sort((a, b) => {
+      const aPercent = (a.nutrient.value / targetFor(a.nutrient)) * 100;
+      const bPercent = (b.nutrient.value / targetFor(b.nutrient)) * 100;
       return aPercent - bPercent;
     });
-  }
+
+    return recommendations;
+  });
 }

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, inject, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { Subscription } from 'rxjs';
 
 import { FoodNutrientParsed } from '../../data-models/FoodNutrientParsed';
 import { NUTRIENT_ICONS } from '../../data-models/NUTRIENT_ICONS';
@@ -13,24 +12,12 @@ import { GenderService } from '../../service/gender.service';
   templateUrl: './nutrients.component.html',
   styleUrl: './nutrients.component.scss',
 })
-export class NutrientsComponent implements OnDestroy {
+export class NutrientsComponent {
   private genderService = inject(GenderService);
 
   readonly nutrients = input<FoodNutrientParsed[]>();
 
   nutrientIcons = NUTRIENT_ICONS;
-  gender: string | undefined;
-  private sub?: Subscription;
-
-  constructor() {
-    this.sub = this.genderService.genderChanges.subscribe((g) => {
-      this.gender = g;
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-  }
 
   /**
    * Get daily value
@@ -38,7 +25,7 @@ export class NutrientsComponent implements OnDestroy {
    * @returns
    */
   getDailyValue(nutrient: FoodNutrientParsed): number {
-    return this.gender === 'men' ? (nutrient.dailyValueMen ?? 0) : (nutrient.dailyValueWomen ?? 0);
+    return this.genderService.gender() === 'men' ? (nutrient.dailyValueMen ?? 0) : (nutrient.dailyValueWomen ?? 0);
   }
 
   /**

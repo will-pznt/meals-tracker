@@ -12,6 +12,7 @@
             class="bar-fill"
             [style.width.%]="getPercent(nutrient)"
             [class.over]="nutrient.value > getDailyValue(nutrient)"
+            [class.low]="getPercent(nutrient) < 50"
           ></div>
           <span class="bar-text">{{ getPercent(nutrient) }}%</span>
         </div>

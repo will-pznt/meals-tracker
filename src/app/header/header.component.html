@@ -1,4 +1,12 @@
 <header class="header">
+  @if (isLoggedIn()) {
+    <div class="header-actions">
+      <button type="button" class="logout-button" (click)="logout()">
+        <span class="logout-icon" aria-hidden="true">⏻</span>
+        Logout
+      </button>
+    </div>
+  }
   <div class="header-content">
     <img src="meals-tracker.png" alt="Meals Logo" class="header-logo" />
     <h1>Meals tracker</h1>

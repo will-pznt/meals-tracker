@@ -1,16 +1,12 @@
-import { Service } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Service, signal } from '@angular/core';
 
 @Service()
 export class GenderService {
-  private gender$ = new BehaviorSubject<'men' | 'women'>('men');
-  genderChanges = this.gender$.asObservable();
+  private genderSignal = signal<'men' | 'women'>('men');
+
+  readonly gender = this.genderSignal.asReadonly();
 
   setGender(g: 'men' | 'women'): void {
-    this.gender$.next(g);
-  }
-
-  getGender(): 'men' | 'women' {
-    return this.gender$.value;
+    this.genderSignal.set(g);
   }
 }

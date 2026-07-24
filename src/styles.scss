@@ -1,10 +1,48 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  /* Brand / chrome (navigation, header, footer) */
+  --brand: #42a5f5;
+  --brand-dark: #1e88e5;
+  --brand-darker: #1565c0;
+
+  /* Nutrition accent (data, meals, progress) */
+  --nutri: #4caf50;
+  --nutri-light: #81c784;
+  --nutri-surface: #e8f5e9;
+
+  /* Status */
+  --danger: #ef5350;
+  --danger-dark: #e53935;
+  --warn: #ffb300;
+  --good: #4caf50;
+
+  /* Neutrals / surfaces */
+  --surface: #ffffff;
+  --surface-muted: #f4f6f8;
+  --surface-alt: #eef1f5;
+  --border: #e2e6ea;
+  --text: #2b2f33;
+  --text-muted: #5f6b76;
+
+  /* Shape, elevation, motion */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: 0.25s ease;
+
+  /* Layout */
+  --content-max: 1200px;
+}
+
 html,
 body {
   height: 100%;
-}
-body {
+  /* Explicit surface so content never floats on the browser's dark canvas
+     (previously the whole paint chain was transparent). */
+  background: var(--surface-muted);
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+  color: var(--text);
 }

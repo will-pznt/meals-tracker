@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  max-width: 1200px;
+  max-width: var(--content-max);
   margin: 1rem auto;
 
   .left-controls {
@@ -13,7 +13,7 @@
     gap: 10px;
   }
 
-  @media (min-width: 931px) {
+  @media (min-width: 769px) {
     .left-and-middle {
       display: flex;
       align-items: center;
@@ -24,41 +24,56 @@
   .middle-row {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
   }
 
   .meal-button {
     padding: 0.6rem 1.2rem;
-    border: none;
-    border-radius: 12px;
-    background-color: #f0f0f0;
-    color: #555;
+    border: 0.1rem solid;
+    border-radius: var(--radius);
+    background-color: var(--surface-alt);
+    color: var(--text-muted);
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition);
     min-width: 80px;
     white-space: nowrap;
     max-width: 100%;
     height: 55px;
 
     &:hover {
-      background-color: #e0e0e0;
+      background-color: var(--border);
     }
 
     &.selected {
-      background-color: #42a5f5;
+      background-color: var(--brand);
       color: #fff;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+      box-shadow: var(--shadow);
     }
   }
 
-  .logout-button {
-    background-color: #ef5350;
-    color: #fff;
-    font-weight: 600;
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
 
-    &:hover {
-      background-color: #e53935;
+    .left-controls {
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .middle-row {
+      flex-wrap: wrap;
+    }
+
+    .meal-button {
+      flex: 1;
+      min-width: auto;
+      padding: 0.4rem 0.5rem;
+      font-size: 0.8rem;
+      height: 44px;
     }
   }
 }
@@ -72,18 +87,33 @@
 .spinner {
   margin-top: 5rem;
 }
+
 .meal-toggle-container mat-form-field {
-  transform: translateY(10px);
   width: 190px;
 }
+
+.gender-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gender-field-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .gender-toggle {
   position: relative;
   display: flex;
-  border-radius: 12px;
+  border-radius: var(--radius);
   overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f0f0f0;
-  height: 55px;
+  border: 2px solid var(--border);
+  background-color: var(--surface-alt);
+  height: 44px;
   width: 150px;
   font-size: 1rem;
 }
@@ -95,22 +125,23 @@
   z-index: 1;
   cursor: pointer;
   font-weight: 500;
-  color: #555;
-  transition: color 0.3s;
+  color: var(--text-muted);
+  transition: color var(--transition);
 }
 
 .gender-button:hover {
-  color: #000;
+  color: var(--text);
 }
+
 .slider {
   position: absolute;
   top: 0;
   left: 0;
   width: 50%;
   height: 100%;
-  background-color: #42a5f5;
-  border-radius: 12px;
-  transition: transform 0.3s ease;
+  background-color: var(--brand);
+  border-radius: var(--radius);
+  transition: transform var(--transition);
   z-index: 0;
 }
 
@@ -118,37 +149,15 @@
   color: #fff;
 }
 
-@media (max-width: 930px) {
-  .meal-toggle-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-  }
+.date-field {
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+}
 
-  .left-controls {
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    width: 100%;
-  }
-
-  .meal-button {
-    flex: 1;
-    min-width: auto;
-    padding: 0.3rem 0.5rem;
-    font-size: 0.75rem;
-    height: 36px;
-  }
-
-  .logout-button {
-    flex: 0 0 auto;
-    height: 36px;
-    font-size: 0.75rem;
-    padding: 0 1rem;
-    border-radius: 10px;
-  }
-
+@media (max-width: 768px) {
   .gender-toggle {
-    width: 120px;
-    font-size: 0.75rem;
+    width: 130px;
+    height: 44px;
+    font-size: 0.8rem;
   }
 }

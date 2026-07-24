@@ -1,10 +1,7 @@
 ::ng-deep .mat-grid-tile .mat-grid-tile-content {
   align-items: flex-start;
-  /* Aligns content to the top */
   justify-content: flex-start;
-  /* Optional: aligns to the left horizontally */
   padding: 8px;
-  /* Optional: adds spacing */
 }
 
 ::ng-deep .mat-button-toggle-group {
@@ -18,14 +15,14 @@
 .meal-title {
   display: flex;
   justify-content: center;
-  font-size: 1.5rem; // slightly larger
-  font-weight: 600; // semi-bold
-  text-transform: capitalize; // first letter of each word capitalized
-  color: #ffffff; // white text
-  background: linear-gradient(90deg, #4caf50, #81c784); // modern flat gradient
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  color: #ffffff;
+  background: linear-gradient(90deg, var(--nutri), var(--nutri-light));
   padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); // subtle shadow
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   margin-bottom: 1rem;
   letter-spacing: 1px;
   text-align: center;
@@ -36,7 +33,7 @@
   gap: 16px;
   align-items: flex-start;
   flex-wrap: wrap;
-  max-width: 1200px;
+  max-width: var(--content-max);
 }
 
 .meal-column,
@@ -51,11 +48,11 @@
 .meal-info {
   font-size: 0.9rem;
   font-weight: 500;
-  color: #616161; // softer gray
-  background-color: #e8f5e9; // light greenish background
+  color: var(--text-muted);
+  background-color: var(--nutri-surface);
   padding: 0.3rem 0.6rem;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
   text-align: center;
   white-space: nowrap;
 }

@@ -7,7 +7,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { FoodItem } from '../../data-models/FoodItem';
@@ -41,7 +40,6 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private genderService = inject(GenderService);
   private foodService = inject(FoodService);
-  private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
   selectedMeal: 'breakfast' | 'lunch' | 'dinner' | 'daily' = 'breakfast';
@@ -204,17 +202,5 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   setGender(value: 'men' | 'women'): void {
     this.gender = value;
     this.genderService.setGender(this.gender);
-  }
-
-  /**
-   * Logout user
-   */
-  logout(): void {
-    this.authService.logout().subscribe({
-      next: () => {
-        this.router.navigate(['/login']);
-      },
-      error: () => this.snackBar.open('❌ Logout failed', 'Close', { duration: 3000 }),
-    });
   }
 }
