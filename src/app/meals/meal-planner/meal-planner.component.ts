@@ -45,15 +45,19 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   selectedMeal: 'breakfast' | 'lunch' | 'dinner' | 'daily' = 'breakfast';
   selectedDate: Date = new Date();
   gender: 'men' | 'women' = 'men';
-  sumEssentialNutrients: FoodNutrientParsed[] = [];
+  sumEssentialNutrients = signal<FoodNutrientParsed[]>([]);
 
   protected loading = signal(true);
 
-  mealFoodItems: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]> = {
+  /**
+   * A signal so updates from async callbacks (Firebase saves/deletes) reliably notify Angular
+   * to re-render, regardless of whether they happen to land inside a zone-triggered CD pass.
+   */
+  mealFoodItems = signal<Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]>>({
     breakfast: [],
     lunch: [],
     dinner: [],
-  };
+  });
 
   private loadSub?: Subscription;
   constructor() { }
@@ -62,7 +66,7 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     if (this.selectedMeal === 'daily') {
       return [];
     }
-    return this.mealFoodItems[this.selectedMeal] || [];
+    return this.mealFoodItems()[this.selectedMeal] || [];
   }
 
   ngOnInit(): void {
@@ -96,17 +100,18 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
    * @param food
    */
   onFoodAdded(food: FoodItem): void {
-    if (this.selectedMeal !== 'daily') {
-      const exists = this.mealFoodItems[this.selectedMeal].some((f) => f.fdcId === food.fdcId);
+    if (this.selectedMeal === 'daily') return;
+    const meal = this.selectedMeal;
 
-      if (exists) {
-        this.snackBar.open('ℹ️ This food is already in the meal', 'Close', { duration: 3000 });
-        return;
-      }
-      this.mealFoodItems[this.selectedMeal] = [...this.mealFoodItems[this.selectedMeal], food];
-      this.recalculateNutrients();
-      this.saveMeal();
+    const exists = this.mealFoodItems()[meal].some((f) => f.fdcId === food.fdcId);
+    if (exists) {
+      this.snackBar.open('ℹ️ This food is already in the meal', 'Close', { duration: 3000 });
+      return;
     }
+
+    this.mealFoodItems.update((items) => ({ ...items, [meal]: [...items[meal], food] }));
+    this.recalculateNutrients();
+    this.saveMeal();
   }
 
   /**
@@ -114,18 +119,37 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
    * @param updatedFood
    */
   onQuantityChanged(updatedFood: FoodItem): void {
-    if (this.selectedMeal !== 'daily') {
-      const existingItem = this.mealFoodItems[this.selectedMeal].find((f) => f.fdcId === updatedFood.fdcId);
-      if (existingItem) {
-        existingItem.quantity = updatedFood.quantity;
-        this.recalculateNutrients();
-        this.saveMeal();
-      }
-    }
+    if (this.selectedMeal === 'daily') return;
+    const meal = this.selectedMeal;
+
+    const existingItem = this.mealFoodItems()[meal].find((f) => f.fdcId === updatedFood.fdcId);
+    if (!existingItem) return;
+
+    this.mealFoodItems.update((items) => ({
+      ...items,
+      [meal]: items[meal].map((f) => (f.fdcId === updatedFood.fdcId ? { ...f, quantity: updatedFood.quantity } : f)),
+    }));
+    this.recalculateNutrients();
+    this.saveMeal();
+  }
+
+  /**
+   * Handle food deleted
+   * @param food
+   */
+  onFoodDeleted(food: FoodItem): void {
+    if (this.selectedMeal === 'daily') return;
+    const meal = this.selectedMeal;
+
+    this.mealFoodItems.update((items) => ({
+      ...items,
+      [meal]: items[meal].filter((f) => f.fdcId !== food.fdcId),
+    }));
+    this.recalculateNutrients();
   }
 
   private recalculateNutrients(): void {
-    this.sumEssentialNutrients = this.foodService.sumEssentialNutrients(this.foodItems);
+    this.sumEssentialNutrients.set(this.foodService.sumEssentialNutrients(this.foodItems));
   }
 
   /**
@@ -153,9 +177,11 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
           savedMeal.id &&
           (this.selectedMeal === 'breakfast' || this.selectedMeal === 'lunch' || this.selectedMeal === 'dinner')
         ) {
-          this.foodItems.forEach((f) => {
-            f.mealId = savedMeal.id;
-          });
+          const meal = this.selectedMeal;
+          this.mealFoodItems.update((items) => ({
+            ...items,
+            [meal]: items[meal].map((f) => ({ ...f, mealId: savedMeal.id })),
+          }));
         }
       },
       error: () => this.snackBar.open('❌ Failed to save meal', 'Close', { duration: 3000 }),
@@ -184,12 +210,12 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
     this.loadSub?.unsubscribe();
     this.loadSub = this.mealService.getMealsByDate(dateIso).subscribe({
       next: (meals) => {
-        this.mealFoodItems = meals;
+        this.mealFoodItems.set(meals);
         this.loading.set(false);
         this.recalculateNutrients();
       },
       error: () => {
-        this.mealFoodItems = { breakfast: [], lunch: [], dinner: [] };
+        this.mealFoodItems.set({ breakfast: [], lunch: [], dinner: [] });
         this.loading.set(false);
       },
     });

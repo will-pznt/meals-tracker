@@ -1,9 +1,8 @@
-import { Component, Input, inject, input, output } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FoodItem } from '../../data-models/FoodItem';
 import { FoodNutrientParsed } from '../../data-models/FoodNutrientParsed';
-import { FoodService } from '../../service/food.service';
 import { MealService } from '../../service/meal.service';
 import { FoodSearchComponent } from '../food-search/food-search.component';
 import { MealDetailsComponent } from '../meal-details/meal-details.component';
@@ -16,7 +15,6 @@ import { NutrientsComponent } from '../nutrients/nutrients.component';
   imports: [FoodSearchComponent, MatCardModule, NutrientsComponent, MealDetailsComponent],
 })
 export class MealDisplayComponent {
-  private foodService = inject(FoodService);
   private mealService = inject(MealService);
   private snackBar = inject(MatSnackBar);
 
@@ -24,10 +22,11 @@ export class MealDisplayComponent {
   readonly selectedDate = input.required<Date>();
   readonly mealFoodItems = input.required<Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]>>();
 
-  @Input() sumEssentialNutrients: FoodNutrientParsed[] = [];
+  readonly sumEssentialNutrients = input<FoodNutrientParsed[]>([]);
 
   readonly addingFoodToMeal = output<FoodItem>();
   readonly updatingQuantityFood = output<FoodItem>();
+  readonly deletingFoodFromMeal = output<FoodItem>();
 
   constructor() { }
 
@@ -52,7 +51,9 @@ export class MealDisplayComponent {
   }
 
   /**
-   * Delete a food item from the meal
+   * Delete a food item from the meal. The actual mealFoodItems state is owned by the
+   * parent (a signal), which is updated via deletingFoodFromMeal once the delete succeeds —
+   * this component doesn't mutate it directly.
    * @param foodItem
    * @returns
    */
@@ -63,8 +64,7 @@ export class MealDisplayComponent {
     }
     this.mealService.deleteFoodItemMeal(foodItem.mealId, foodItem.fdcId).subscribe({
       next: () => {
-        this.mealFoodItems()[this.selectedMeal()] = this.foodItems.filter((item) => item.fdcId !== foodItem.fdcId);
-        this.sumEssentialNutrients = this.foodService.sumEssentialNutrients(this.foodItems);
+        this.deletingFoodFromMeal.emit(foodItem);
       },
       error: () => {
         this.snackBar.open('❌ Failed to delete item', 'Close', { duration: 3000 });

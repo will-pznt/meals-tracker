@@ -83,13 +83,14 @@
       <app-meal-display
         [selectedMeal]="selectedMeal"
         [selectedDate]="selectedDate"
-        [mealFoodItems]="mealFoodItems"
-        [sumEssentialNutrients]="sumEssentialNutrients"
+        [mealFoodItems]="mealFoodItems()"
+        [sumEssentialNutrients]="sumEssentialNutrients()"
         (addingFoodToMeal)="onFoodAdded($event)"
         (updatingQuantityFood)="onQuantityChanged($event)"
+        (deletingFoodFromMeal)="onFoodDeleted($event)"
       ></app-meal-display>
     } @else {
-      <app-daily-requirements [mealFoodItems]="mealFoodItems"></app-daily-requirements>
+      <app-daily-requirements [mealFoodItems]="mealFoodItems()"></app-daily-requirements>
     }
   }
 </div>

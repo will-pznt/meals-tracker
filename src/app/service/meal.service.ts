@@ -1,7 +1,7 @@
-import { Service, inject } from '@angular/core';
+import { NgZone, Service, inject } from '@angular/core';
 import { Database } from '@angular/fire/database';
 import { equalTo, get, orderByChild, push, query, ref, remove, set, update } from 'firebase/database';
-import { forkJoin, from, Observable, of, throwError } from 'rxjs';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { FoodItem } from '../data-models/FoodItem';
@@ -14,6 +14,7 @@ export class MealService {
   private db = inject(Database);
   private authService = inject(AuthService);
   private foodService = inject(FoodService);
+  private zone = inject(NgZone);
 
   /**
    * Save a meal directly to Firebase Realtime Database, scoped to the current user.
@@ -27,12 +28,12 @@ export class MealService {
 
     if (meal.id) {
       const mealRef = ref(this.db, `meals/${uid}/${meal.id}`);
-      return from(set(mealRef, meal)).pipe(map(() => meal));
+      return this.fromFirebase(set(mealRef, meal)).pipe(map(() => meal));
     }
 
     const newMealRef = push(ref(this.db, `meals/${uid}`));
     const mealWithId: Meal = { ...meal, id: newMealRef.key! };
-    return from(set(newMealRef, mealWithId)).pipe(map(() => mealWithId));
+    return this.fromFirebase(set(newMealRef, mealWithId)).pipe(map(() => mealWithId));
   }
 
   /**
@@ -53,7 +54,7 @@ export class MealService {
 
     const mealsQuery = query(ref(this.db, `meals/${uid}`), orderByChild('date'), equalTo(date));
 
-    return from(get(mealsQuery)).pipe(
+    return this.fromFirebase(get(mealsQuery)).pipe(
       switchMap((snapshot) => {
         const meals: Meal[] = snapshot.exists() ? Object.values(snapshot.val()) : [];
         if (!meals.length) return of(emptyResult);
@@ -85,7 +86,7 @@ export class MealService {
 
     const mealRef = ref(this.db, `meals/${uid}/${mealId}`);
 
-    return from(get(mealRef)).pipe(
+    return this.fromFirebase(get(mealRef)).pipe(
       switchMap((snapshot) => {
         if (!snapshot.exists()) return of(undefined);
 
@@ -93,11 +94,27 @@ export class MealService {
         const updatedItems = (meal.items || []).filter((item) => String(item.fdcId) !== String(fdcId));
 
         if (updatedItems.length === 0) {
-          return from(remove(mealRef)).pipe(map(() => undefined));
+          return this.fromFirebase(remove(mealRef)).pipe(map(() => undefined));
         }
-        return from(update(mealRef, { items: updatedItems })).pipe(map(() => undefined));
+        return this.fromFirebase(update(mealRef, { items: updatedItems })).pipe(map(() => undefined));
       }),
     );
+  }
+
+  /**
+   * Wrap a raw Firebase SDK promise so its resolution is delivered inside the Angular zone.
+   * Firebase's modular SDK resolves its promises via its own internal (non-zone-patched)
+   * scheduling, so without this, subscribers receive the value correctly but Angular never
+   * schedules a change-detection pass for it — the data updates but the view doesn't.
+   * Same fix already applied in AuthService for the same reason.
+   */
+  private fromFirebase<T>(promise: Promise<T>): Observable<T> {
+    return new Observable<T>((subscriber) => {
+      promise.then(
+        (value) => this.zone.run(() => { subscriber.next(value); subscriber.complete(); }),
+        (error) => this.zone.run(() => subscriber.error(error)),
+      );
+    });
   }
 
   /**
