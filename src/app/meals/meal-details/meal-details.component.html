@@ -1,5 +1,5 @@
 @if (foodItems() && foodItems().length > 0) {
-  <table mat-table [dataSource]="foodItems()" class="mat-elevation-z2">
+  <table mat-table [dataSource]="foodItems()" [trackBy]="trackByFdcId" class="mat-elevation-z2">
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef>Name</th>
       <td mat-cell *matCellDef="let foodItem">{{ foodItem.description }}</td>
@@ -30,7 +30,7 @@
       </td>
     </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay; trackBy: trackByFdcId"></tr>
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let element; columns: columnsToDisplay"></tr>
   </table>
 } @else {

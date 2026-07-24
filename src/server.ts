@@ -21,6 +21,9 @@ const angularApp = new AngularNodeAppEngine();
 const apiKey = process.env['USDA_API_KEY'] as string;
 if (!apiKey) throw new Error('USDA_API_KEY not set in .env');
 
+/** In-memory cache of USDA food details, keyed by FDC id. Food data doesn't change, so no TTL is needed. */
+const foodDetailCache = new Map<string, unknown>();
+
 /**
  * USDA API proxy: search foods.
  */
@@ -43,14 +46,23 @@ app.get('/api/foods/search', async (req, res) => {
 });
 
 /**
- * USDA API proxy: food details by FDC id.
+ * USDA API proxy: food details by FDC id. Cached in-memory since meal loads
+ * re-request the same items repeatedly (e.g. revisiting a date).
  */
 app.get('/api/foods/:fdcId', async (req, res) => {
+  const { fdcId } = req.params;
+  const cached = foodDetailCache.get(fdcId);
+  if (cached) {
+    res.json(cached);
+    return;
+  }
   try {
     const response = await fetch(
-      `https://api.nal.usda.gov/fdc/v1/food/${req.params.fdcId}?api_key=${apiKey}&dataType=Foundation,SR Legacy`,
+      `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}&dataType=Foundation,SR Legacy`,
     );
-    res.json(await response.json());
+    const data = await response.json();
+    foodDetailCache.set(fdcId, data);
+    res.json(data);
   } catch {
     res.status(500).json({ error: 'Failed to fetch USDA data' });
   }

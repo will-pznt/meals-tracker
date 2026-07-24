@@ -1,11 +1,9 @@
 # 🍽️ Meal Nutrition Tracker
 
-This project is a **Meal Tracking & Nutrition App** built with **Angular 20**.  
+This project is a **Meal Tracking & Nutrition App** built with **Angular 22**.  
 It uses the **USDA FoodData Central API (FDC)** to provide detailed nutrition data, allowing users to track the nutrients of their meals in real time.  
 
-The app was developed to **showcase my skills in modern web development** by combining a strong **frontend, backend, and cloud integration**.
-
-📍 back-end github : https://github.com/will-pznt/meals-tracker-back
+The app was developed to **showcase my skills in modern web development**, combining a signal-driven Angular frontend directly with Firebase for authentication and data storage.
 
  **Online Demo:** [https://meals-tracker-fio4.onrender.com](https://meals-tracker-fio4.onrender.com)
 
@@ -18,18 +16,16 @@ The app was developed to **showcase my skills in modern web development** by com
 - 🔎 Search for foods and nutrients using the **USDA FoodData Central API**.  
 - 📊 View and track **essential nutrients** (macros and micros).  
 - 🎨 Built with **Angular Material** for a sleek, responsive UI.  
-- ⚡ Server-side backend powered by **Node.js + Express**.  
-- ☁️ **Firebase integration** for authentication and data storage.  
-- ✅ Fully supports **SSR (Server-Side Rendering)** with Angular Universal.
+- ☁️ **Firebase integration** for authentication and meal storage — the Angular app talks directly to Firebase, no separate backend.
+- ✅ Fully supports **SSR (Server-Side Rendering)**, whose Express layer also proxies USDA API requests.
 
 ---
 
 ## 🛠️ Tech Stack
-- **Frontend:** Angular 20, Angular Material  
-- **Backend:** Node.js + Express  
+- **Frontend:** Angular 22, Angular Material  
 - **API:** USDA FoodData Central (FDC) https://fdc.nal.usda.gov/
-- **Database:** Firebase  
-- **Other Tools:** TypeScript, dotenv, ESLint, Prettier  
+- **Database & Auth:** Firebase (Realtime Database, Authentication)
+- **Other Tools:** TypeScript, dotenv, ESLint, Prettier 
 
 
 ## ▶️ Run
