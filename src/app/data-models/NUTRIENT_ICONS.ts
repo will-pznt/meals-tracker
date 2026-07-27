@@ -4,7 +4,7 @@ export const NUTRIENT_ICONS: Record<string, string> = {
   'Total lipid (fat)': '🥑',
   'Carbohydrate, by difference': '🌾',
   'Fiber, total dietary': '🥦',
-  'Sugars, total including NLEA': '🍬',
+  'Sugars, Total': '🍬',
 
   'Calcium, Ca': '🦴',
   'Iron, Fe': '🩸',
