@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { map } from 'rxjs';
 
 import { AuthService } from '../service/auth-service.service';
+import { DemoService } from '../service/demo.service';
 
 @Component({
   selector: 'app-header',
@@ -14,10 +15,13 @@ import { AuthService } from '../service/auth-service.service';
 })
 export class HeaderComponent {
   private authService = inject(AuthService);
+  private demoService = inject(DemoService);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
 
-  /** Whether a user is currently signed in — gates showing the Logout action. */
+  protected isDemoMode = this.demoService.isDemoMode;
+
+
   protected isLoggedIn = toSignal(
     this.authService.user.pipe(map((user) => !!user)),
     { initialValue: false },
@@ -31,5 +35,13 @@ export class HeaderComponent {
       next: () => this.router.navigate(['/login']),
       error: () => this.snackBar.open('❌ Logout failed', 'Close', { duration: 3000 }),
     });
+  }
+
+  /**
+   * Leave demo mode and return to the login page.
+   */
+  exitDemo(): void {
+    this.demoService.disable();
+    this.router.navigate(['/login']);
   }
 }

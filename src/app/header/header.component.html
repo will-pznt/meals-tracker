@@ -1,5 +1,12 @@
 <header class="header">
-  @if (isLoggedIn()) {
+  @if (isDemoMode()) {
+    <div class="header-actions">
+      <button type="button" class="logout-button" (click)="exitDemo()">
+        <span class="logout-icon" aria-hidden="true">⏻</span>
+        Exit Demo
+      </button>
+    </div>
+  } @else if (isLoggedIn()) {
     <div class="header-actions">
       <button type="button" class="logout-button" (click)="logout()">
         <span class="logout-icon" aria-hidden="true">⏻</span>

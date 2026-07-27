@@ -1,3 +1,32 @@
+.demo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  background-color: var(--warn);
+  color: #3a2a00;
+  font-size: 0.9rem;
+  text-align: center;
+
+  button {
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: #3a2a00;
+    color: #fff;
+    padding: 0.3rem 0.9rem;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: opacity var(--transition);
+
+    &:hover {
+      opacity: 0.85;
+    }
+  }
+}
+
 .app-container {
   display: flex;
   flex-direction: column;

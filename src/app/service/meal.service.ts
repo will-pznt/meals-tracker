@@ -4,9 +4,11 @@ import { equalTo, get, orderByChild, push, query, ref, remove, set, update } fro
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
+import { DEMO_MEAL_DATA } from '../data-models/DEMO_MEAL_DATA';
 import { FoodItem } from '../data-models/FoodItem';
 import { Meal } from '../data-models/Meal';
 import { AuthService } from './auth-service.service';
+import { DemoService } from './demo.service';
 import { FoodService } from './food.service';
 
 @Service()
@@ -14,15 +16,23 @@ export class MealService {
   private db = inject(Database);
   private authService = inject(AuthService);
   private foodService = inject(FoodService);
+  private demoService = inject(DemoService);
   private zone = inject(NgZone);
 
   /**
    * Save a meal directly to Firebase Realtime Database, scoped to the current user.
    * Updates the existing meal if `meal.id` is set, otherwise creates a new one.
+   * In demo mode, this is a no-op success — nothing is persisted.
    * @param meal Meal object to be saved
    * @returns
    */
   saveMeal(meal: Meal): Observable<Meal> {
+    if (this.demoService.isDemoMode()) {
+      // Always return a truthy id, even for a first save, so a freshly-added demo item can
+      // still be deleted afterward (deletion requires a mealId).
+      return of({ ...meal, id: meal.id || `demo-${meal.name}` });
+    }
+
     const uid = this.authService.currentUserId;
     if (!uid) return throwError(() => new Error('User not authenticated'));
 
@@ -39,6 +49,7 @@ export class MealService {
   /**
    * Fetch meals for a specific date, enrich each stored food item with its USDA details,
    * and transform the response into a structured format.
+   * In demo mode, returns the same sample meals regardless of date.
    * @param date in 'YYYY-MM-DD' format
    * @returns
    */
@@ -48,6 +59,8 @@ export class MealService {
       lunch: [],
       dinner: [],
     };
+
+    if (this.demoService.isDemoMode()) return of(DEMO_MEAL_DATA);
 
     const uid = this.authService.currentUserId;
     if (!uid) return of(emptyResult);
@@ -76,11 +89,14 @@ export class MealService {
 
   /**
    * Delete a food item from a specific meal. Removes the whole meal if it becomes empty.
+   * In demo mode, this is a no-op success — nothing is persisted.
    * @param mealId
    * @param fdcId
    * @returns
    */
   deleteFoodItemMeal(mealId: string, fdcId: number): Observable<void> {
+    if (this.demoService.isDemoMode()) return of(undefined);
+
     const uid = this.authService.currentUserId;
     if (!uid) return throwError(() => new Error('User not authenticated'));
 

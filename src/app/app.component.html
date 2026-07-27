@@ -1,5 +1,12 @@
 <app-header></app-header>
 
+@if (isDemoMode()) {
+  <div class="demo-banner">
+    <span>👀 You're viewing a demo with sample data — nothing you do here is saved.</span>
+    <button type="button" (click)="signUpFromDemo()">Create a free account</button>
+  </div>
+}
+
 <div class="app-container">
   @if (loading()) {
     <mat-spinner class="center-spinner"></mat-spinner>

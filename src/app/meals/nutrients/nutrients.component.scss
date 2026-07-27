@@ -55,7 +55,7 @@
 
 @media (max-width: 900px) {
   .item-container {
-    flex: 0 0 calc((100% - 20px) / 3);
+    flex: 0 0 calc((100% - 20px) / 2);
     padding: 0.4rem 0.4rem;
   }
   .item-container span {
@@ -95,7 +95,6 @@ button {
 
 .bar-fill {
   height: 100%;
-  /* Default (50-100% of target): on track */
   background-color: var(--good);
   transition:
     width 0.3s ease-in-out,

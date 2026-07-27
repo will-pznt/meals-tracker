@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterOutlet } from '@angular/router';
+import { Router, RouterOutlet } from '@angular/router';
 
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { AuthService } from './service/auth-service.service';
+import { DemoService } from './service/demo.service';
 
 @Component({
   selector: 'app-root',
@@ -27,9 +28,20 @@ import { AuthService } from './service/auth-service.service';
 })
 export class AppComponent {
   private auth = inject(AuthService);
+  private demoService = inject(DemoService);
+  private router = inject(Router);
 
   title = 'Daily Nutrient Requirements';
   protected loading = signal(true);
+  protected isDemoMode = this.demoService.isDemoMode;
+
+  /**
+   * Leave demo mode and go create a real account.
+   */
+  protected signUpFromDemo(): void {
+    this.demoService.disable();
+    this.router.navigate(['/login']);
+  }
 
   constructor() {
     this.auth.user.subscribe({

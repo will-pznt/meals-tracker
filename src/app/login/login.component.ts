@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../service/auth-service.service';
+import { DemoService } from '../service/demo.service';
 import { debounce, email, form, FormField, minLength, required, submit, validate } from '@angular/forms/signals';
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
@@ -45,6 +46,7 @@ interface LoginData {
 })
 export class LoginComponent {
   private authService = inject(AuthService);
+  private demoService = inject(DemoService);
   private router = inject(Router);
 
   isRegisterMode = signal(false);
@@ -111,6 +113,15 @@ export class LoginComponent {
         this.loading.set(false);
       }
     });
+  }
+
+  /**
+   * Enter demo mode: skips auth entirely and shows the app pre-filled with sample data,
+   * so visitors can explore without creating an account.
+   */
+  viewDemo(): void {
+    this.demoService.enable();
+    this.router.navigate(['/home']);
   }
 
   /**
