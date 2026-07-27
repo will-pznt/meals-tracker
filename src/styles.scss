@@ -1,17 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 
 :root {
-  /* Brand / chrome (navigation, header, footer) */
-  --brand: #42a5f5;
-  --brand-dark: #1e88e5;
-  --brand-darker: #1565c0;
+  color-scheme: light;
 
-  /* Nutrition accent (data, meals, progress) */
+  --brand: #22c55e;
+  --brand-dark: #16a34a;
+  --brand-darker: #0f5132;
+
   --nutri: #4caf50;
   --nutri-light: #81c784;
   --nutri-surface: #e8f5e9;
 
-  /* Status */
   --danger: #ef5350;
   --danger-dark: #e53935;
   --warn: #ffb300;

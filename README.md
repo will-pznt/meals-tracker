@@ -5,7 +5,7 @@ It uses the **USDA FoodData Central API (FDC)** to provide detailed nutrition da
 
 The app was developed to **showcase my skills in modern web development**, combining a signal-driven Angular frontend directly with Firebase for authentication and data storage.
 
- **Online Demo:** [https://meals-tracker-fio4.onrender.com](https://meals-tracker-fio4.onrender.com)
+ **Online Demo:** [https://meals-tracker--meal-nutrition-e08bf.us-east4.hosted.app/]https://meals-tracker--meal-nutrition-e08bf.us-east4.hosted.app/)
 
 **Note:** Loading may take some time on the first connection because the web service may spin down after inactivity (Render free tier behavior).
 

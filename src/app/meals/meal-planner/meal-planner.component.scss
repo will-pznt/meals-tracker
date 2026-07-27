@@ -17,7 +17,7 @@
     .left-and-middle {
       display: flex;
       align-items: center;
-      gap: 20px; /* control spacing between meal buttons and date/toggle */
+      gap: 20px;
     }
   }
 
@@ -80,12 +80,14 @@
 
 .meal-container {
   display: flex;
+  align-items: center;
   justify-content: center;
   width: 100%;
+  min-height: 690px;
 }
 
 .spinner {
-  margin-top: 5rem;
+  margin: 0;
 }
 
 .meal-toggle-container mat-form-field {
