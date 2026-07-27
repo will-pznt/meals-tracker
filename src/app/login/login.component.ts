@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { debounce, email, form, FormField, minLength, required, submit, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -11,7 +12,6 @@ import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../service/auth-service.service';
 import { DemoService } from '../service/demo.service';
-import { debounce, email, form, FormField, minLength, required, submit, validate } from '@angular/forms/signals';
 
 const AUTH_ERROR_MESSAGES: Record<string, string> = {
   'auth/invalid-credential': 'Incorrect email or password.',

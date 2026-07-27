@@ -3,7 +3,16 @@ import { FoodNutrient } from './FoodNutrient';
 
 /** Minimal FoodNutrient builder — only nutrientName/unitName/value are read by the app's nutrient logic. */
 function n(nutrientName: string, unitName: string, value: number): FoodNutrient {
-  return { nutrientId: 0, nutrientName, nutrientNumber: '', rank: 0, indentLevel: 0, foodNutrientId: 0, unitName, value };
+  return {
+    nutrientId: 0,
+    nutrientName,
+    nutrientNumber: '',
+    rank: 0,
+    indentLevel: 0,
+    foodNutrientId: 0,
+    unitName,
+    value,
+  };
 }
 
 /**

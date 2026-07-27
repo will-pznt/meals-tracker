@@ -6,9 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { FoodItem } from '../../data-models/FoodItem';
 import { debounceTime, Subject } from 'rxjs';
+
 import { MinMaxDirective } from './min-max.directive';
+import { FoodItem } from '../../data-models/FoodItem';
 
 @Component({
   selector: 'app-meal-details',

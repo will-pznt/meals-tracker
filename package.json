@@ -12,9 +12,7 @@
     "serve:ssr:meal-nutrition-app": "node dist/meal-nutrition-app/server/server.mjs",
     "lint": "eslint '**/*.{ts,html}'",
     "lint:fix": "eslint \"src/**/*.{ts,html}\" --fix",
-    "format": "prettier --write \"src/**/*.{ts,html,scss,css,json,md}\"",
-    "check": "npm run lint && npm run format -- --check",
-    "ng-lint": "ng lint"
+    "format": "prettier --write \"src/**/*.{ts,html,scss,css,json,md}\""
   },
   "private": true,
   "dependencies": {

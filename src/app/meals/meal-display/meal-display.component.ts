@@ -1,6 +1,7 @@
 import { Component, inject, input, output } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { FoodItem } from '../../data-models/FoodItem';
 import { FoodNutrientParsed } from '../../data-models/FoodNutrientParsed';
 import { MealService } from '../../service/meal.service';
@@ -28,7 +29,7 @@ export class MealDisplayComponent {
   readonly updatingQuantityFood = output<FoodItem>();
   readonly deletingFoodFromMeal = output<FoodItem>();
 
-  constructor() { }
+  constructor() {}
 
   get foodItems(): FoodItem[] {
     return this.mealFoodItems()[this.selectedMeal()] || [];

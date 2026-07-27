@@ -18,7 +18,14 @@ interface SearchData {
   selector: 'app-food-search',
   templateUrl: './food-search.component.html',
   styleUrls: ['./food-search.component.scss'],
-  imports: [FormField, MatAutocompleteModule, MatFormFieldModule, MatProgressSpinnerModule, MatInputModule, MatIconModule],
+  imports: [
+    FormField,
+    MatAutocompleteModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatInputModule,
+    MatIconModule,
+  ],
 })
 export class FoodSearchComponent {
   private foodService = inject(FoodService);

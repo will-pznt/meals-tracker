@@ -38,8 +38,6 @@
 html,
 body {
   height: 100%;
-  /* Explicit surface so content never floats on the browser's dark canvas
-     (previously the whole paint chain was transparent). */
   background: var(--surface-muted);
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;

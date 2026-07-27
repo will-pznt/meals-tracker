@@ -60,7 +60,7 @@ export class MealPlannerComponent implements OnInit, OnDestroy {
   });
 
   private loadSub?: Subscription;
-  constructor() { }
+  constructor() {}
 
   get foodItems(): FoodItem[] {
     if (this.selectedMeal === 'daily') {

@@ -9,7 +9,7 @@ export const routes: Routes = [
   {
     path: 'login',
     component: LoginComponent,
-    canActivate: [guestGuard]
+    canActivate: [guestGuard],
   },
   {
     path: 'home',

@@ -1,7 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { NgZone, inject, PLATFORM_ID, Service } from '@angular/core';
 import { Auth, User, UserCredential } from '@angular/fire/auth';
-
 import {
   browserSessionPersistence,
   createUserWithEmailAndPassword,
@@ -30,7 +29,6 @@ export class AuthService {
       this.initialized.next(true);
     });
   }
-
 
   private buildUserStream(): Observable<User | null> {
     if (!this.isBrowser) return of(null);
@@ -105,7 +103,7 @@ export class AuthService {
    */
   login(email: string, password: string): Observable<void> {
     const promise = this.persistenceReady.then(() =>
-      signInWithEmailAndPassword(this.firebaseAuth, email, password).then(() => { }),
+      signInWithEmailAndPassword(this.firebaseAuth, email, password).then(() => {}),
     );
     return from(promise);
   }

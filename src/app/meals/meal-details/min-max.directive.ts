@@ -1,7 +1,7 @@
 import { Directive, ElementRef, HostListener, inject, input } from '@angular/core';
 
 @Directive({
-  selector: '[minMax]',
+  selector: '[appMinMax]',
 })
 export class MinMaxDirective {
   private ref = inject(ElementRef);
@@ -12,7 +12,7 @@ export class MinMaxDirective {
 
   @HostListener('input')
   public onInput(): void {
-    let val = parseInt(this.ref.nativeElement.value);
+    const val = parseInt(this.ref.nativeElement.value);
     const max = this.max();
     const min = this.min();
     if (max !== null && max !== undefined && val >= max) this.ref.nativeElement.value = max.toString();

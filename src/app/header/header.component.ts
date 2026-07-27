@@ -21,11 +21,7 @@ export class HeaderComponent {
 
   protected isDemoMode = this.demoService.isDemoMode;
 
-
-  protected isLoggedIn = toSignal(
-    this.authService.user.pipe(map((user) => !!user)),
-    { initialValue: false },
-  );
+  protected isLoggedIn = toSignal(this.authService.user.pipe(map((user) => !!user)), { initialValue: false });
 
   /**
    * Log the current user out and redirect to the login page.

@@ -7,8 +7,8 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
-import express from 'express';
 import * as dotenv from 'dotenv';
+import express from 'express';
 
 dotenv.config();
 

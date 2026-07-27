@@ -4,13 +4,14 @@ import { equalTo, get, orderByChild, push, query, ref, remove, set, update } fro
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
+import { AuthService } from './auth-service.service';
+import { DemoService } from './demo.service';
+import { FoodService } from './food.service';
 import { DEMO_MEAL_DATA } from '../data-models/DEMO_MEAL_DATA';
 import { FoodItem } from '../data-models/FoodItem';
 import { FoodNutrient } from '../data-models/FoodNutrient';
 import { Meal } from '../data-models/Meal';
-import { AuthService } from './auth-service.service';
-import { DemoService } from './demo.service';
-import { FoodService } from './food.service';
+import { UsdaDetailNutrient } from '../data-models/UsdaApi';
 
 @Service()
 export class MealService {
@@ -128,7 +129,11 @@ export class MealService {
   private fromFirebase<T>(promise: Promise<T>): Observable<T> {
     return new Observable<T>((subscriber) => {
       promise.then(
-        (value) => this.zone.run(() => { subscriber.next(value); subscriber.complete(); }),
+        (value) =>
+          this.zone.run(() => {
+            subscriber.next(value);
+            subscriber.complete();
+          }),
         (error) => this.zone.run(() => subscriber.error(error)),
       );
     });
@@ -141,7 +146,7 @@ export class MealService {
    * only understands the flat shape, so without this the food item loads fine but every nutrient
    * is silently skipped (nutrientName is undefined) and the daily-needs comparison shows nothing.
    */
-  private normalizeDetailNutrients(rawNutrients: any[] | undefined): FoodNutrient[] {
+  private normalizeDetailNutrients(rawNutrients: UsdaDetailNutrient[] | undefined): FoodNutrient[] {
     return (rawNutrients || [])
       .filter((n) => n?.nutrient)
       .map((n) => ({
@@ -165,15 +170,13 @@ export class MealService {
   private enrichMealItems(meal: Meal): Observable<{ name: string; items: FoodItem[] }> {
     const itemRequests = (meal.items || []).map((item) =>
       this.foodService.getFoodDetails(item.fdcId).pipe(
-        map(
-          (detail): FoodItem => ({
-            fdcId: item.fdcId,
-            description: detail?.description || '',
-            quantity: item.quantity,
-            foodNutrients: this.normalizeDetailNutrients(detail?.foodNutrients),
-            mealId: meal.id,
-          }),
-        ),
+        map((detail): FoodItem => ({
+          fdcId: item.fdcId,
+          description: detail?.description || '',
+          quantity: item.quantity,
+          foodNutrients: this.normalizeDetailNutrients(detail?.foodNutrients),
+          mealId: meal.id,
+        })),
         catchError(() =>
           of<FoodItem>({
             fdcId: item.fdcId,

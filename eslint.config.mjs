@@ -1,32 +1,27 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import { fixupConfigRules } from "@eslint/compat";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import angular from "angular-eslint";
+import importPlugin from "eslint-plugin-import";
+import prettierRecommended from "eslint-plugin-prettier/recommended";
+import tseslint from "typescript-eslint";
 
-// Resolve current file path for FlatCompat
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Compatibility wrapper for legacy ESLint configs
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-});
-
-export default defineConfig([
-  // Ignore dist and projects, but keep src/app
-  globalIgnores([
-    "projects/**/*",
-    "**/dist",
-    "!src/app/**/*",
-  ]),
+export default tseslint.config(
+  {
+    ignores: ["projects/**/*", "**/dist"],
+  },
 
   // TypeScript files
   {
     files: ["**/*.ts"],
+    extends: [
+      js.configs.recommended,
+      ...tseslint.configs.recommended,
+      ...angular.configs.tsRecommended,
+      importPlugin.flatConfigs.recommended,
+      importPlugin.flatConfigs.typescript,
+      prettierRecommended,
+    ],
+    processor: angular.processInlineTemplates,
+
     settings: {
       "import/resolver": {
         typescript: {
@@ -35,24 +30,12 @@ export default defineConfig([
         },
       },
     },
-    extends: fixupConfigRules(
-      compat.extends(
-        "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates",
-        "plugin:import/recommended",
-        "plugin:import/typescript",
-        "plugin:prettier/recommended",
-        "eslint-config-prettier",
-        "plugin:@typescript-eslint/recommended"
-      )
-    ),
 
     languageOptions: {
-      ecmaVersion: 2022, // Updated for modern JS features
+      ecmaVersion: 2022,
       sourceType: "module",
       parserOptions: {
         project: ["tsconfig.json"],
-        createDefaultProgram: true,
       },
     },
 
@@ -102,9 +85,7 @@ export default defineConfig([
   // Angular HTML templates
   {
     files: ["**/*.html"],
-    extends: fixupConfigRules(
-      compat.extends("plugin:@angular-eslint/template/recommended")
-    ),
+    extends: [...angular.configs.templateRecommended],
     rules: {},
   },
-]);
+);

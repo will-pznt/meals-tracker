@@ -4,7 +4,9 @@ import { map, Observable } from 'rxjs';
 
 import { ESSENTIAL_NUTRIENTS_DATA } from '../data-models/ESSENTIAL_NUTRIENTS_DATA';
 import { FoodItem } from '../data-models/FoodItem';
+import { FoodNutrient } from '../data-models/FoodNutrient';
 import { FoodNutrientParsed } from '../data-models/FoodNutrientParsed';
+import { UsdaFoodDetail, UsdaSearchResponse } from '../data-models/UsdaApi';
 
 @Service()
 export class FoodService {
@@ -12,7 +14,7 @@ export class FoodService {
 
   private BASE = '/api/foods';
 
-  constructor() { }
+  constructor() {}
 
   /** Searches for foods using the provided query string.
    * Each returned food item is assigned a default quantity of 100 grams.
@@ -20,9 +22,9 @@ export class FoodService {
    * @returns An Observable emitting an array of FoodItem objects.
    */
   searchFoods(query: string): Observable<FoodItem[]> {
-    return this.http.get<any>(`${this.BASE}/search`, { params: { q: query } }).pipe(
+    return this.http.get<UsdaSearchResponse>(`${this.BASE}/search`, { params: { q: query } }).pipe(
       map((res) =>
-        res.foods.map((food: any) => ({
+        res.foods.map((food) => ({
           ...food,
           quantity: 100,
         })),
@@ -34,8 +36,8 @@ export class FoodService {
    * @param fdcId The FDC ID of the food item.
    * @returns An Observable emitting the detailed food item data.
    */
-  getFoodDetails(fdcId: number): Observable<any> {
-    return this.http.get<any>(`${this.BASE}/${fdcId}`);
+  getFoodDetails(fdcId: number): Observable<UsdaFoodDetail> {
+    return this.http.get<UsdaFoodDetail>(`${this.BASE}/${fdcId}`);
   }
 
   /**
@@ -73,8 +75,6 @@ export class FoodService {
 
     if (unitLower === 'mg' && targetLower === 'µg') value *= 1000;
     else if (unitLower === 'µg' && targetLower === 'mg') value /= 1000;
-    else if (unitLower === 'g' && targetLower === 'g')
-      value = value; // g → g no change
     else if (unitLower === 'kg' && targetLower === 'g') value *= 1000;
 
     // Return normalized value with the target unit
@@ -92,8 +92,8 @@ export class FoodService {
     for (const item of foodItems) {
       const quantity = item.quantity ?? 100;
 
-      const exactMatches: { nutrient: any; match: FoodNutrientParsed }[] = [];
-      const aliasCandidates: { nutrient: any; match: FoodNutrientParsed }[] = [];
+      const exactMatches: { nutrient: FoodNutrient; match: FoodNutrientParsed }[] = [];
+      const aliasCandidates: { nutrient: FoodNutrient; match: FoodNutrientParsed }[] = [];
 
       for (const nutrient of item.foodNutrients || []) {
         if (!nutrient.nutrientName) continue;
