@@ -6,6 +6,7 @@ import { catchError, map, switchMap } from 'rxjs/operators';
 
 import { DEMO_MEAL_DATA } from '../data-models/DEMO_MEAL_DATA';
 import { FoodItem } from '../data-models/FoodItem';
+import { FoodNutrient } from '../data-models/FoodNutrient';
 import { Meal } from '../data-models/Meal';
 import { AuthService } from './auth-service.service';
 import { DemoService } from './demo.service';
@@ -134,6 +135,28 @@ export class MealService {
   }
 
   /**
+   * The USDA "food detail" endpoint (used to re-enrich saved items on reload) nests nutrient
+   * info under `nutrient: {name, unitName}` with the amount in `amount`, unlike the "search"
+   * endpoint which returns a flat `{nutrientName, unitName, value}` shape. `sumEssentialNutrients`
+   * only understands the flat shape, so without this the food item loads fine but every nutrient
+   * is silently skipped (nutrientName is undefined) and the daily-needs comparison shows nothing.
+   */
+  private normalizeDetailNutrients(rawNutrients: any[] | undefined): FoodNutrient[] {
+    return (rawNutrients || [])
+      .filter((n) => n?.nutrient)
+      .map((n) => ({
+        nutrientId: n.nutrient.id,
+        nutrientName: n.nutrient.name,
+        nutrientNumber: n.nutrient.number,
+        unitName: n.nutrient.unitName,
+        value: n.amount ?? 0,
+        rank: n.nutrient.rank,
+        indentLevel: 0,
+        foodNutrientId: n.id,
+      }));
+  }
+
+  /**
    * Fetch USDA details for each stored food item ({fdcId, quantity}) in a meal.
    * A failed lookup for one item falls back to a blank description/nutrients instead of
    * failing the whole meal load.
@@ -147,7 +170,7 @@ export class MealService {
             fdcId: item.fdcId,
             description: detail?.description || '',
             quantity: item.quantity,
-            foodNutrients: detail?.foodNutrients || [],
+            foodNutrients: this.normalizeDetailNutrients(detail?.foodNutrients),
             mealId: meal.id,
           }),
         ),
