@@ -7,6 +7,7 @@ import {
   isMainModule,
   writeResponseToNodeResponse,
 } from '@angular/ssr/node';
+import compression from 'compression';
 import * as dotenv from 'dotenv';
 import express from 'express';
 
@@ -17,6 +18,9 @@ const browserDistFolder = join(serverDistFolder, '../browser');
 
 const app = express();
 const angularApp = new AngularNodeAppEngine();
+
+// Gzip every response 
+app.use(compression());
 
 const apiKey = process.env['USDA_API_KEY'] as string;
 if (!apiKey) throw new Error('USDA_API_KEY not set in .env');

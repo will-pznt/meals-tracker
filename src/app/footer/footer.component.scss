@@ -35,6 +35,7 @@
 
   .tech-logo {
     height: 40px;
+    width: auto; // width/height attributes only reserve the aspect ratio; CSS still drives the size
     object-fit: contain;
   }
 

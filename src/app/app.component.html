@@ -7,12 +7,12 @@
   </div>
 }
 
-<div class="app-container">
+<main class="app-container">
   @if (loading()) {
     <mat-spinner class="center-spinner"></mat-spinner>
   } @else {
     <router-outlet></router-outlet>
   }
-</div>
+</main>
 
 <app-footer></app-footer>
