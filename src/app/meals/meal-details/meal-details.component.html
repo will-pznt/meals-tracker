@@ -14,17 +14,22 @@
           [min]="1"
           [max]="9999"
           appMinMax
+          [attr.aria-label]="'Quantity in grams for ' + foodItem.description"
           (ngModelChange)="onQuantityChange(foodItem)"
           (blur)="onQuantityBlur(foodItem)"
         />
       </td>
     </ng-container>
 
-    <!-- Actions (delete button) -->
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef>Actions</th>
       <td mat-cell *matCellDef="let foodItem">
-        <button mat-icon-button color="warn" (click)="deleteFoodItem(foodItem)">
+        <button
+          mat-icon-button
+          color="warn"
+          [attr.aria-label]="'Remove ' + foodItem.description"
+          (click)="deleteFoodItem(foodItem)"
+        >
           <mat-icon>delete</mat-icon>
         </button>
       </td>

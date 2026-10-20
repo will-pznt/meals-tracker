@@ -1,0 +1,20 @@
+# Meals Tracker
+
+> Meals Tracker is a web app for planning daily meals and tracking their nutrition against personal daily needs, using food data from the USDA FoodData Central API.
+
+## Features
+
+- Search foods from the USDA database and add them to breakfast, lunch, dinner or snacks
+- Adjust quantities in grams; nutrients are recalculated automatically
+- Compare each meal and the whole day against recommended daily intake
+- Weekly trend chart of a chosen nutrient against its daily target
+- Demo mode with sample data, no account required
+
+## Pages
+
+- [Login](https://meals-tracker--meal-nutrition-e08bf.us-east4.hosted.app/login): sign in, sign up, or open the demo
+- [Meal planner](https://meals-tracker--meal-nutrition-e08bf.us-east4.hosted.app/home): plan meals and track nutrition (requires sign-in or demo mode)
+
+## Data source
+
+- [USDA FoodData Central](https://fdc.nal.usda.gov/): nutrient data for every food
