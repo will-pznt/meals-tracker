@@ -1,12 +1,14 @@
+import { ESSENTIAL_NUTRIENTS_DATA } from './ESSENTIAL_NUTRIENTS_DATA';
 import { FoodItem } from './FoodItem';
 import { FoodNutrient } from './FoodNutrient';
+import { MealName } from './Meal';
 
-/** Minimal FoodNutrient builder — only nutrientName/unitName/value are read by the app's nutrient logic. */
 function n(nutrientName: string, unitName: string, value: number): FoodNutrient {
+  const definition = ESSENTIAL_NUTRIENTS_DATA.find((d) => d.nutrientName === nutrientName);
   return {
     nutrientId: 0,
     nutrientName,
-    nutrientNumber: '',
+    nutrientNumber: definition?.nutrientNumbers[0] ?? '',
     rank: 0,
     indentLevel: 0,
     foodNutrientId: 0,
@@ -18,13 +20,12 @@ function n(nutrientName: string, unitName: string, value: number): FoodNutrient 
 /**
  * Realistic sample meals shown in demo mode, so visitors see a fully populated app.
  */
-export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]> = {
+export const DEMO_MEAL_DATA: Readonly<Record<MealName, FoodItem[]>> = {
   breakfast: [
     {
       fdcId: 1001,
       description: 'Oatmeal, cooked with water',
       quantity: 200,
-      mealId: 'demo-breakfast',
       foodNutrients: [
         n('Energy', 'kcal', 71),
         n('Protein', 'g', 2.5),
@@ -39,7 +40,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 1002,
       description: 'Banana, raw',
       quantity: 120,
-      mealId: 'demo-breakfast',
       foodNutrients: [
         n('Energy', 'kcal', 89),
         n('Potassium, K', 'mg', 358),
@@ -53,7 +53,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 1003,
       description: 'Almonds, raw',
       quantity: 20,
-      mealId: 'demo-breakfast',
       foodNutrients: [
         n('Energy', 'kcal', 116),
         n('Protein', 'g', 4.3),
@@ -69,7 +68,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 2001,
       description: 'Chicken breast, grilled, skinless',
       quantity: 150,
-      mealId: 'demo-lunch',
       foodNutrients: [
         n('Energy', 'kcal', 248),
         n('Protein', 'g', 46.5),
@@ -84,7 +82,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 2002,
       description: 'Brown rice, cooked',
       quantity: 150,
-      mealId: 'demo-lunch',
       foodNutrients: [
         n('Energy', 'kcal', 165),
         n('Protein', 'g', 3.9),
@@ -97,7 +94,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 2003,
       description: 'Broccoli, steamed',
       quantity: 120,
-      mealId: 'demo-lunch',
       foodNutrients: [
         n('Energy', 'kcal', 41),
         n('Fiber, total dietary', 'g', 3.3),
@@ -114,7 +110,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 3001,
       description: 'Salmon, baked',
       quantity: 150,
-      mealId: 'demo-dinner',
       foodNutrients: [
         n('Energy', 'kcal', 280),
         n('Protein', 'g', 39),
@@ -129,7 +124,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 3002,
       description: 'Sweet potato, roasted',
       quantity: 150,
-      mealId: 'demo-dinner',
       foodNutrients: [
         n('Energy', 'kcal', 135),
         n('Carbohydrate, by difference', 'g', 31.5),
@@ -143,7 +137,6 @@ export const DEMO_MEAL_DATA: Record<'breakfast' | 'lunch' | 'dinner', FoodItem[]
       fdcId: 3003,
       description: 'Spinach, sautéed',
       quantity: 90,
-      mealId: 'demo-dinner',
       foodNutrients: [
         n('Energy', 'kcal', 23),
         n('Iron, Fe', 'mg', 3.6),

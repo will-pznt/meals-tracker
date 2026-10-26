@@ -1,21 +1,31 @@
-import { Directive, ElementRef, HostListener, inject, input } from '@angular/core';
+import { Directive, ElementRef, inject, input, output } from '@angular/core';
+
+export function clampQuantity(raw: string, min: number, max: number): number | null {
+  const value = Number.parseInt(raw, 10);
+  if (Number.isNaN(value)) return null;
+  return Math.min(max, Math.max(min, value));
+}
 
 @Directive({
-  selector: '[appMinMax]',
+  selector: 'input[appMinMax]',
+  host: {
+    '[attr.min]': 'min()',
+    '[attr.max]': 'max()',
+    '(input)': 'onInput()',
+  },
 })
 export class MinMaxDirective {
-  private ref = inject(ElementRef);
+  private readonly el = inject<ElementRef<HTMLInputElement>>(ElementRef);
 
-  public readonly min = input.required<number>();
+  readonly min = input.required<number>();
+  readonly max = input.required<number>();
+  readonly clampedValue = output<number>();
 
-  public readonly max = input.required<number>();
-
-  @HostListener('input')
-  public onInput(): void {
-    const val = parseInt(this.ref.nativeElement.value);
-    const max = this.max();
-    const min = this.min();
-    if (max !== null && max !== undefined && val >= max) this.ref.nativeElement.value = max.toString();
-    else if (min !== null && min !== undefined && val <= min) this.ref.nativeElement.value = min.toString();
+  onInput(): void {
+    const input = this.el.nativeElement;
+    const clamped = clampQuantity(input.value, this.min(), this.max());
+    if (clamped === null) return;
+    if (String(clamped) !== input.value) input.value = String(clamped);
+    this.clampedValue.emit(clamped);
   }
 }

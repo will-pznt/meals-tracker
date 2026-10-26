@@ -2,7 +2,7 @@
 
 A meal & nutrition tracking app built with **Angular 22**. Search real foods via the **USDA FoodData Central API**, add them to breakfast/lunch/dinner, and see how each meal stacks up against daily nutrient targets — all backed directly by **Firebase**, no custom backend in between.
 
-Built to showcase modern Angular practices: signals end-to-end for state management, Signal Forms, the `resource()` API for async data, and server-side rendering.
+Built to showcase modern Angular practices: zoneless change detection, signals end-to-end for state management, Signal Forms, the `resource()` / `rxResource()` APIs for async data, and server-side rendering.
 
 ![Meals Tracker demo](docs/demo.gif)
 
@@ -24,11 +24,11 @@ No account needed — click **View Demo** on the login screen to explore the app
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** Angular 22 (Signals, Signal Forms, `resource()`), Angular Material
+- **Frontend:** Angular 22 (zoneless, Signals, `linkedSignal`, Signal Forms, `resource()`), Angular Material
 - **Data:** [USDA FoodData Central API](https://fdc.nal.usda.gov/)
 - **Backend:** Firebase (Realtime Database, Authentication) — accessed directly from the client, no custom API
 - **SSR:** Angular Universal / `@angular/ssr` with an Express server that also proxies USDA requests
-- **Tooling:** TypeScript, ESLint, Prettier
+- **Tooling:** TypeScript, ESLint, Prettier, Vitest
 
 ---
 
@@ -47,7 +47,7 @@ Browser  ──►  Angular app  ──►  Firebase (Auth + Realtime Database)
 ## ▶️ Getting Started
 
 ### Prerequisites
-- Node.js
+- Node.js 22.22.3+ or 24.15+
 - A [USDA FoodData Central API key](https://fdc.nal.usda.gov/api-key-signup) (free)
 
 ### Setup
@@ -70,10 +70,15 @@ npm start
 npm run start-prod
 ```
 
+### Deploy database rules
+```bash
+firebase deploy --only database
+```
+
 ### Other scripts
 ```bash
 npm run build       # production build
-npm test            # unit tests
+npm test            # unit tests (Vitest)
 npm run lint        # lint check
 ```
 

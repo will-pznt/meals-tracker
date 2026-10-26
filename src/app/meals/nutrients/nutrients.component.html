@@ -1,23 +1,23 @@
-@if (nutrients()) {
-  <div class="flex-container">
-    @for (nutrient of nutrients(); track nutrient.nutrientName) {
-      <div class="item-container">
-        <span class="label">
-          <span class="icon">{{ nutrientIcons[nutrient.nutrientName] || '❓' }}</span>
-          <span class="label-text">{{ nutrient.label }}</span>
-          <span class="unitName">({{ nutrient.unitName }})</span>
-        </span>
-        <div class="bar-container">
-          <div
-            class="bar-fill"
-            [style.width.%]="getPercent(nutrient)"
-            [class.over]="nutrient.value > getDailyValue(nutrient)"
-            [class.low]="getPercent(nutrient) < 50"
-          ></div>
-          <span class="bar-text">{{ getPercent(nutrient) }}%</span>
-        </div>
-        <span>{{ nutrient.value }} / {{ getDailyValue(nutrient) }} </span>
+<div class="flex-container">
+  @for (row of rows(); track row.nutrientName) {
+    <div class="item-container">
+      <span class="label">
+        <span class="icon" aria-hidden="true">{{ row.icon }}</span>
+        <span class="label-text">{{ row.label }}</span>
+        <span class="unitName">({{ row.unitName }}{{ row.isLimit ? ', max' : '' }})</span>
+      </span>
+      <div
+        class="bar-container"
+        role="progressbar"
+        [attr.aria-label]="row.label"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [attr.aria-valuenow]="row.percent"
+      >
+        <div class="bar-fill" [style.width.%]="row.percent" [class.over]="row.over" [class.low]="row.low"></div>
+        <span class="bar-text">{{ row.percent }}%</span>
       </div>
-    }
-  </div>
-}
+      <span>{{ row.value }} / {{ row.target }}</span>
+    </div>
+  }
+</div>

@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { map } from 'rxjs';
+import { map, take } from 'rxjs';
 
 import { AuthService } from '../service/auth-service.service';
 
@@ -9,10 +9,7 @@ export const guestGuard: CanActivateFn = () => {
   const router = inject(Router);
 
   return auth.user.pipe(
-    map((user) => {
-      if (!user) return true;
-      router.navigate(['/home']);
-      return false;
-    }),
+    take(1),
+    map((user) => (user ? router.createUrlTree(['/home']) : true)),
   );
 };

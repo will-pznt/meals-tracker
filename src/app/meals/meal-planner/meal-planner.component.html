@@ -1,48 +1,23 @@
 <div class="meal-toggle-container">
   <div class="left-and-middle">
     <div class="left-controls" role="group" aria-label="Select meal">
-      <button
-        type="button"
-        class="meal-button"
-        [class.selected]="selectedMeal === 'breakfast'"
-        [attr.aria-pressed]="selectedMeal === 'breakfast'"
-        (click)="selectMeal('breakfast')"
-      >
-        Breakfast
-      </button>
-      <button
-        type="button"
-        class="meal-button"
-        [class.selected]="selectedMeal === 'lunch'"
-        [attr.aria-pressed]="selectedMeal === 'lunch'"
-        (click)="selectMeal('lunch')"
-      >
-        Lunch
-      </button>
-      <button
-        type="button"
-        class="meal-button"
-        [class.selected]="selectedMeal === 'dinner'"
-        [attr.aria-pressed]="selectedMeal === 'dinner'"
-        (click)="selectMeal('dinner')"
-      >
-        Dinner
-      </button>
-      <button
-        type="button"
-        class="meal-button"
-        [class.selected]="selectedMeal === 'daily'"
-        [attr.aria-pressed]="selectedMeal === 'daily'"
-        (click)="selectMeal('daily')"
-      >
-        Daily
-      </button>
+      @for (tab of mealTabs; track tab) {
+        <button
+          type="button"
+          class="meal-button"
+          [class.selected]="selectedMeal() === tab"
+          [attr.aria-pressed]="selectedMeal() === tab"
+          (click)="selectMeal(tab)"
+        >
+          {{ tab | titlecase }}
+        </button>
+      }
     </div>
 
     <div class="middle-row">
       <mat-form-field subscriptSizing="dynamic" class="date-field">
         <mat-label>Choose a date</mat-label>
-        <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (ngModelChange)="onDateChange($event)" />
+        <input matInput [matDatepicker]="picker" [ngModel]="selectedDate()" (ngModelChange)="onDateChange($event)" />
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
       </mat-form-field>
@@ -50,12 +25,12 @@
       <div class="gender-field">
         <span class="gender-field-label">Targets for</span>
         <div class="gender-toggle" role="group" aria-label="Daily target profile">
-          <div class="slider" [style.transform]="gender === 'men' ? 'translateX(0%)' : 'translateX(100%)'"></div>
+          <div class="slider" [style.transform]="gender() === 'men' ? 'translateX(0%)' : 'translateX(100%)'"></div>
           <button
             type="button"
             class="gender-button"
-            [class.selected]="gender === 'men'"
-            [attr.aria-pressed]="gender === 'men'"
+            [class.selected]="gender() === 'men'"
+            [attr.aria-pressed]="gender() === 'men'"
             (click)="setGender('men')"
           >
             Man
@@ -63,8 +38,8 @@
           <button
             type="button"
             class="gender-button"
-            [class.selected]="gender === 'women'"
-            [attr.aria-pressed]="gender === 'women'"
+            [class.selected]="gender() === 'women'"
+            [attr.aria-pressed]="gender() === 'women'"
             (click)="setGender('women')"
           >
             Woman
@@ -79,12 +54,12 @@
   @if (loading()) {
     <mat-spinner class="spinner"></mat-spinner>
   } @else {
-    @if (selectedMeal !== 'daily') {
+    @let meal = selectedMeal();
+    @if (meal !== 'daily') {
       <app-meal-display
-        [selectedMeal]="selectedMeal"
-        [selectedDate]="selectedDate"
-        [mealFoodItems]="mealFoodItems()"
-        [sumEssentialNutrients]="sumEssentialNutrients()"
+        [selectedMeal]="meal"
+        [foodItems]="currentItems()"
+        [nutrients]="mealNutrients()"
         (addingFoodToMeal)="onFoodAdded($event)"
         (updatingQuantityFood)="onQuantityChanged($event)"
         (deletingFoodFromMeal)="onFoodDeleted($event)"

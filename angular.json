@@ -17,11 +17,13 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "allowedCommonJsDependencies": ["faye-websocket", "@firebase/database"],
+            "allowedCommonJsDependencies": [
+              "faye-websocket",
+              "@firebase/database"
+            ],
             "outputPath": "dist/meal-nutrition-app",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -31,9 +33,15 @@
               }
             ],
             "security": {
-              "allowedHosts": ["localhost", "127.0.0.1"]
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1"
+              ]
             },
-            "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
+            "styles": [
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/styles.scss"
+            ],
             "scripts": [],
             "server": "src/main.server.ts",
             "outputMode": "server",
@@ -80,34 +88,30 @@
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n"
         },
-        
         "test": {
-          "builder": "@angular/build:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": ["@angular/material/prebuilt-themes/azure-blue.css", "src/styles.scss"],
-            "scripts": []
+            "runner": "vitest",
+            "buildTarget": "::development"
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
     }
   },
   "cli": {
-    "schematicCollections": ["angular-eslint"]
+    "schematicCollections": [
+      "angular-eslint"
+    ]
   },
   "schematics": {
     "@schematics/angular:component": {

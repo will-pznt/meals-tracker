@@ -3,9 +3,10 @@ export interface FoodNutrientParsed {
   label: string;
   value: number;
   unitName: string;
-  aliases: string[];
+  nutrientNumbers: string[];
   dailyValueMen?: number;
   dailyValueWomen?: number;
+  isLimit?: boolean;
   legacyConversion?: {
     fromUnit: string;
     toUnit: string;

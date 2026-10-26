@@ -1,5 +1,4 @@
 import { FoodNutrient } from './FoodNutrient';
-import { FoodNutrientParsed } from './FoodNutrientParsed';
 
 export interface FoodItem {
   fdcId: number;
@@ -18,7 +17,5 @@ export interface FoodItem {
   mostRecentAcquisitionDate?: string;
   score?: number;
   foodNutrients?: FoodNutrient[];
-  essentialNutrients?: FoodNutrientParsed[];
   quantity?: number;
-  mealId?: string;
 }

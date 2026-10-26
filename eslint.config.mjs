@@ -82,6 +82,13 @@ export default tseslint.config(
     },
   },
 
+  {
+    files: ["src/server.ts", "src/main.ts"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+
   // Angular HTML templates
   {
     files: ["**/*.html"],

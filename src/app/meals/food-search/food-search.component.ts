@@ -1,18 +1,22 @@
-import { Component, computed, inject, output, resource, signal } from '@angular/core';
+import { Component, computed, inject, output, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { debounce, form, FormField } from '@angular/forms/signals';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { firstValueFrom } from 'rxjs';
+import { catchError, of } from 'rxjs';
 
 import { FoodItem } from '../../data-models/FoodItem';
+import { DEFAULT_QUANTITY_GRAMS } from '../../nutrition/nutrient-totals';
 import { FoodService } from '../../service/food.service';
 
 interface SearchData {
   query: string;
 }
+
+export const SEARCH_DEBOUNCE_MS = 300;
 
 @Component({
   selector: 'app-food-search',
@@ -32,38 +36,27 @@ export class FoodSearchComponent {
 
   readonly foodSelected = output<FoodItem>();
 
-  searchModel = signal<SearchData>({ query: '' });
+  readonly searchModel = signal<SearchData>({ query: '' });
 
-  searchForm = form(this.searchModel, (s) => {
-    debounce(s.query, 300);
+  readonly searchForm = form(this.searchModel, (s) => {
+    debounce(s.query, SEARCH_DEBOUNCE_MS);
   });
 
-  private searchResource = resource({
-    params: () => this.searchModel().query.trim(),
-    loader: async ({ params: query }) => {
-      if (!query) return [];
-      try {
-        return await firstValueFrom(this.foodService.searchFoods(query));
-      } catch {
-        return [];
-      }
-    },
+  private readonly searchResource = rxResource({
+    params: () => this.searchModel().query.trim() || undefined,
+    stream: ({ params: query }) => this.foodService.searchFoods(query).pipe(catchError(() => of<FoodItem[]>([]))),
+    defaultValue: [],
   });
 
-  readonly filteredFoods = computed(() => this.searchResource.value() ?? []);
+  readonly filteredFoods = computed(() => this.searchResource.value());
   readonly loading = this.searchResource.isLoading;
 
-  displayFn(food: FoodItem): string {
-    return food.description || '';
+  displayFn(food: FoodItem | string | null): string {
+    return typeof food === 'string' ? food : (food?.description ?? '');
   }
 
-  /**
-   * Handle food selection from autocomplete
-   * @param food
-   */
   selectFood(food: FoodItem): void {
-    food.quantity = 100;
-    this.foodSelected.emit(food);
+    this.foodSelected.emit({ ...food, quantity: DEFAULT_QUANTITY_GRAMS });
     this.searchModel.set({ query: '' });
   }
 }

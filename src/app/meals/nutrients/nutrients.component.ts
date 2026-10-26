@@ -1,42 +1,50 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, input } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { Component, computed, inject, input } from '@angular/core';
 
 import { FoodNutrientParsed } from '../../data-models/FoodNutrientParsed';
 import { NUTRIENT_ICONS } from '../../data-models/NUTRIENT_ICONS';
+import { dailyTarget } from '../../nutrition/nutrient-totals';
 import { GenderService } from '../../service/gender.service';
+
+export interface NutrientRow {
+  nutrientName: string;
+  label: string;
+  unitName: string;
+  icon: string;
+  value: number;
+  target: number;
+  percent: number;
+  over: boolean;
+  low: boolean;
+  isLimit: boolean;
+}
 
 @Component({
   selector: 'app-nutrients',
-  imports: [CommonModule, MatCardModule],
   templateUrl: './nutrients.component.html',
   styleUrl: './nutrients.component.scss',
 })
 export class NutrientsComponent {
   private genderService = inject(GenderService);
 
-  readonly nutrients = input<FoodNutrientParsed[]>();
+  readonly nutrients = input<FoodNutrientParsed[]>([]);
 
-  nutrientIcons = NUTRIENT_ICONS;
-
-  /**
-   * Get daily value
-   * @param nutrient
-   * @returns
-   */
-  getDailyValue(nutrient: FoodNutrientParsed): number {
-    return this.genderService.gender() === 'men' ? (nutrient.dailyValueMen ?? 0) : (nutrient.dailyValueWomen ?? 0);
-  }
-
-  /**
-   * Get percent of daily value
-   * @param nutrient
-   * @returns
-   */
-  getPercent(nutrient: FoodNutrientParsed): number {
-    const daily = this.getDailyValue(nutrient);
-    if (!daily || daily === 0) return 0;
-    const val = nutrient.value || 0;
-    return Math.min(100, Math.round((val / daily) * 100));
-  }
+  readonly rows = computed<NutrientRow[]>(() => {
+    const gender = this.genderService.gender();
+    return this.nutrients().map((nutrient) => {
+      const target = dailyTarget(nutrient, gender);
+      const percent = target ? Math.min(100, Math.round((nutrient.value / target) * 100)) : 0;
+      return {
+        nutrientName: nutrient.nutrientName,
+        label: nutrient.label,
+        unitName: nutrient.unitName,
+        icon: NUTRIENT_ICONS[nutrient.nutrientName] ?? '❓',
+        value: nutrient.value,
+        target,
+        percent,
+        over: target > 0 && nutrient.value > target,
+        low: !nutrient.isLimit && percent < 50,
+        isLimit: !!nutrient.isLimit,
+      };
+    });
+  });
 }

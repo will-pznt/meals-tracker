@@ -1,28 +1,25 @@
-import { CommonModule } from '@angular/common';
 import { Component, input, output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { debounceTime, Subject } from 'rxjs';
+import { debounce, filter, groupBy, merge, mergeMap, Subject, timer } from 'rxjs';
 
 import { MinMaxDirective } from './min-max.directive';
 import { FoodItem } from '../../data-models/FoodItem';
 
+export const QUANTITY_DEBOUNCE_MS = 500;
+export const MIN_QUANTITY = 1;
+export const MAX_QUANTITY = 9999;
+
+interface QuantityChange {
+  fdcId: number;
+  quantity: number;
+}
+
 @Component({
   selector: 'app-meal-details',
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    FormsModule,
-    MatInputModule,
-    MinMaxDirective,
-  ],
+  imports: [MatTableModule, MatButtonModule, MatIconModule, MinMaxDirective],
   templateUrl: './meal-details.component.html',
   styleUrls: ['./meal-details.component.scss'],
 })
@@ -31,54 +28,56 @@ export class MealDetailsComponent {
   readonly quantityFoodItemEvent = output<FoodItem>();
   readonly deleteFoodItemEvent = output<FoodItem>();
 
-  private quantityChangeSubject = new Subject<FoodItem>();
-  private lastEmittedQuantities = new Map<number, number>();
+  protected readonly minQuantity = MIN_QUANTITY;
+  protected readonly maxQuantity = MAX_QUANTITY;
+  protected readonly columnsToDisplay = ['description', 'quantity', 'actions'];
 
-  columnsToDisplay = ['description', 'quantity', 'actions'];
+  private readonly quantityChanges = new Subject<QuantityChange>();
+  private readonly flushes = new Subject<number>();
 
   constructor() {
-    this.quantityChangeSubject.pipe(debounceTime(500)).subscribe((foodItem) => this.emitIfChanged(foodItem));
+    this.quantityChanges
+      .pipe(
+        groupBy((change) => change.fdcId),
+        mergeMap((changes) =>
+          changes.pipe(
+            debounce(() =>
+              merge(timer(QUANTITY_DEBOUNCE_MS), this.flushes.pipe(filter((fdcId) => fdcId === changes.key))),
+            ),
+          ),
+        ),
+        takeUntilDestroyed(),
+      )
+      .subscribe((change) => this.commit(change));
   }
 
-  /**
-   * Update quantity of a food item and emit event after debounce time
-   * @param foodItem
-   */
-  onQuantityChange(foodItem: FoodItem): void {
-    this.quantityChangeSubject.next(foodItem);
+  onQuantityInput(foodItem: FoodItem, quantity: number): void {
+    this.quantityChanges.next({ fdcId: foodItem.fdcId, quantity });
   }
 
-  /**
-   * Emit event if quantity has changed on input blur
-   * @param foodItem
-   */
-  onQuantityBlur(foodItem: FoodItem): void {
-    this.emitIfChanged(foodItem);
-  }
-
-  /**
-   * Emit event if quantity has changed
-   * @param foodItem
-   */
-  private emitIfChanged(foodItem: FoodItem): void {
-    if (typeof foodItem.fdcId === 'number') {
-      const lastValue = this.lastEmittedQuantities.get(foodItem.fdcId);
-      if (lastValue !== foodItem.quantity && foodItem.quantity !== undefined) {
-        this.lastEmittedQuantities.set(foodItem.fdcId, foodItem.quantity);
-        this.quantityFoodItemEvent.emit(foodItem);
-      }
+  onQuantityBlur(foodItem: FoodItem, event: FocusEvent): void {
+    this.flushes.next(foodItem.fdcId);
+    const inputEl = event.target as HTMLInputElement;
+    if (Number.isNaN(Number.parseInt(inputEl.value, 10))) {
+      inputEl.value = String(this.findItem(foodItem.fdcId)?.quantity ?? foodItem.quantity ?? '');
     }
   }
 
-  /**
-   * Emit event to delete a food item
-   * @param foodItem
-   */
   deleteFoodItem(foodItem: FoodItem): void {
     this.deleteFoodItemEvent.emit(foodItem);
   }
 
   trackByFdcId(_: number, item: FoodItem): number {
     return item.fdcId;
+  }
+
+  private commit({ fdcId, quantity }: QuantityChange): void {
+    const current = this.findItem(fdcId);
+    if (!current || current.quantity === quantity) return;
+    this.quantityFoodItemEvent.emit({ ...current, quantity });
+  }
+
+  private findItem(fdcId: number): FoodItem | undefined {
+    return this.foodItems().find((item) => item.fdcId === fdcId);
   }
 }

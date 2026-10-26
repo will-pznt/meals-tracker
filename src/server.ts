@@ -9,92 +9,137 @@ import {
 } from '@angular/ssr/node';
 import compression from 'compression';
 import * as dotenv from 'dotenv';
-import express from 'express';
+import express, { Response } from 'express';
+import { rateLimit } from 'express-rate-limit';
 
 dotenv.config();
 
 const serverDistFolder = dirname(fileURLToPath(import.meta.url));
 const browserDistFolder = join(serverDistFolder, '../browser');
 
+const USDA_BASE_URL = 'https://api.nal.usda.gov/fdc/v1';
+const USDA_DATA_TYPES = 'Foundation,SR Legacy';
+const MAX_QUERY_LENGTH = 100;
+const MAX_CACHE_ENTRIES = 2000;
+const UPSTREAM_TIMEOUT_MS = 10_000;
+
+const apiKey = process.env['USDA_API_KEY'];
+if (!apiKey) throw new Error('USDA_API_KEY not set in .env');
+
 const app = express();
 const angularApp = new AngularNodeAppEngine();
 
-// Gzip every response 
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
 app.use(compression());
 
-const apiKey = process.env['USDA_API_KEY'] as string;
-if (!apiKey) throw new Error('USDA_API_KEY not set in .env');
+class BoundedCache<T> {
+  private readonly entries = new Map<string, T>();
 
-/** In-memory cache of USDA food details, keyed by FDC id. Food data doesn't change, so no TTL is needed. */
-const foodDetailCache = new Map<string, unknown>();
+  constructor(private readonly maxEntries: number) {}
 
-/**
- * USDA API proxy: search foods.
- */
+  get(key: string): T | undefined {
+    const value = this.entries.get(key);
+    if (value !== undefined) {
+      this.entries.delete(key);
+      this.entries.set(key, value);
+    }
+    return value;
+  }
+
+  set(key: string, value: T): void {
+    this.entries.delete(key);
+    this.entries.set(key, value);
+    if (this.entries.size > this.maxEntries) {
+      const oldest = this.entries.keys().next().value;
+      if (oldest !== undefined) this.entries.delete(oldest);
+    }
+  }
+}
+
+const foodDetailCache = new BoundedCache<unknown>(MAX_CACHE_ENTRIES);
+const searchCache = new BoundedCache<unknown>(MAX_CACHE_ENTRIES);
+
+const apiLimiter = rateLimit({
+  windowMs: 60_000,
+  limit: 60,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+app.use('/api', apiLimiter);
+
+async function fetchUsda(url: URL, res: Response): Promise<unknown | undefined> {
+  url.searchParams.set('api_key', apiKey!);
+  try {
+    const response = await fetch(url, { signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) });
+    if (response.status === 404) {
+      res.status(404).json({ error: 'Food not found' });
+      return undefined;
+    }
+    if (!response.ok) {
+      console.error(`[USDA ${response.status}] ${url.pathname}`);
+      res.status(502).json({ error: 'Food data service unavailable' });
+      return undefined;
+    }
+    return await response.json();
+  } catch (err) {
+    console.error('[USDA fetch failed]', err);
+    res.status(502).json({ error: 'Food data service unavailable' });
+    return undefined;
+  }
+}
+
 app.get('/api/foods/search', async (req, res) => {
-  const query = req.query['q'] as string;
-  if (!query) {
-    res.status(400).json({ error: 'Missing query' });
+  const raw = req.query['q'];
+  const query = typeof raw === 'string' ? raw.trim() : '';
+  if (!query || query.length > MAX_QUERY_LENGTH) {
+    res.status(400).json({ error: `Query must be 1-${MAX_QUERY_LENGTH} characters` });
     return;
   }
 
-  try {
-    const dataTypes = encodeURIComponent('Foundation,SR Legacy');
-    const targetUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(query)}&dataType=${dataTypes}&pageSize=10`;
-
-    const response = await fetch(targetUrl);
-
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.error(`[USDA Search Error ${response.status}]:`, errBody);
-      res.status(response.status).json({ error: 'USDA API returned error', details: errBody });
-      return;
-    }
-
-    const data = await response.json();
-    res.json(data);
-  } catch (err) {
-    console.error('[Server Fetch Exception]:', err);
-    res.status(500).json({ error: 'Failed to fetch USDA data', details: String(err) });
+  const cacheKey = query.toLowerCase();
+  const cached = searchCache.get(cacheKey);
+  if (cached) {
+    res.json(cached);
+    return;
   }
+
+  const url = new URL(`${USDA_BASE_URL}/foods/search`);
+  url.searchParams.set('query', query);
+  url.searchParams.set('dataType', USDA_DATA_TYPES);
+  url.searchParams.set('pageSize', '10');
+
+  const data = await fetchUsda(url, res);
+  if (data === undefined) return;
+  searchCache.set(cacheKey, data);
+  res.json(data);
 });
 
-/**
- * USDA API proxy: food details by FDC id.
- */
 app.get('/api/foods/:fdcId', async (req, res) => {
   const { fdcId } = req.params;
+  if (!/^\d{1,10}$/.test(fdcId)) {
+    res.status(400).json({ error: 'Invalid food id' });
+    return;
+  }
+
   const cached = foodDetailCache.get(fdcId);
   if (cached) {
     res.json(cached);
     return;
   }
 
-  try {
-    const dataTypes = encodeURIComponent('Foundation,SR Legacy');
-    const targetUrl = `https://api.nal.usda.gov/fdc/v1/food/${fdcId}?api_key=${apiKey}&dataType=${dataTypes}`;
-
-    const response = await fetch(targetUrl);
-
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.error(`[USDA Detail Error ${response.status}]:`, errBody);
-      res.status(response.status).json({ error: 'USDA API returned error', details: errBody });
-      return;
-    }
-
-    const data = await response.json();
-    foodDetailCache.set(fdcId, data);
-    res.json(data);
-  } catch (err) {
-    console.error('[Server Fetch Exception]:', err);
-    res.status(500).json({ error: 'Failed to fetch USDA data', details: String(err) });
-  }
+  const data = await fetchUsda(new URL(`${USDA_BASE_URL}/food/${fdcId}`), res);
+  if (data === undefined) return;
+  foodDetailCache.set(fdcId, data);
+  res.json(data);
 });
 
-/**
- * Serve static files from /browser.
- */
+app.use('/api', (_req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
 app.use(
   express.static(browserDistFolder, {
     maxAge: '1y',
@@ -103,9 +148,6 @@ app.use(
   }),
 );
 
-/**
- * Handle all other requests by rendering the Angular application.
- */
 app.use((req, res, next) => {
   angularApp
     .handle(req)
@@ -113,10 +155,6 @@ app.use((req, res, next) => {
     .catch(next);
 });
 
-/**
- * Start the server if this module is the main entry point.
- * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
- */
 if (isMainModule(import.meta.url)) {
   const port = process.env['PORT'] || 4000;
   app.listen(port, () => {
@@ -124,7 +162,4 @@ if (isMainModule(import.meta.url)) {
   });
 }
 
-/**
- * The request handler used by the Angular CLI (during dev-server and build) or Firebase Cloud Functions.
- */
 export const reqHandler = createNodeRequestHandler(app);

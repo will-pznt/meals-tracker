@@ -1,26 +1,16 @@
-import { provideHttpClient } from '@angular/common/http';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
-import { browserSessionPersistence, initializeAuth, provideAuth } from '@angular/fire/auth';
-import { provideDatabase, getDatabase } from '@angular/fire/database';
-import { provideClientHydration } from '@angular/platform-browser';
+import { provideHttpClient, withFetch } from '@angular/common/http';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
-import { environment } from '../environments/environment';
-import { FoodService } from './service/food.service';
-import { GenderService } from './service/gender.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZonelessChangeDetection(),
+    provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideHttpClient(),
-    provideClientHydration(),
-    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideDatabase(() => getDatabase()),
-    provideAuth(() => initializeAuth(getApp(), { persistence: browserSessionPersistence })),
-    FoodService,
-    GenderService,
+    provideHttpClient(withFetch()),
+    provideClientHydration(withEventReplay()),
   ],
 };

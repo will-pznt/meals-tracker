@@ -1,9 +1,7 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { debounce, email, form, FormField, minLength, required, submit, validate } from '@angular/forms/signals';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -31,16 +29,7 @@ interface LoginData {
 
 @Component({
   selector: 'app-login',
-  imports: [
-    FormField,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCardModule,
-    CommonModule,
-    MatProgressSpinnerModule,
-    MatDialogModule,
-  ],
+  imports: [FormField, MatFormFieldModule, MatInputModule, MatButtonModule, MatCardModule, MatProgressSpinnerModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -102,10 +91,10 @@ export class LoginComponent {
       this.loading.set(true);
 
       try {
-        if (this.isRegisterMode()) {
-          await firstValueFrom(this.authService.registerWithEmail(email, password));
-        }
-        await firstValueFrom(this.authService.login(email, password));
+        const auth$ = this.isRegisterMode()
+          ? this.authService.register(email, password)
+          : this.authService.login(email, password);
+        await firstValueFrom(auth$);
         this.router.navigate(['/home']);
       } catch (error) {
         this.errorMessage.set(this.toErrorMessage(error));

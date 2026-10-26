@@ -2,19 +2,19 @@
   <mat-card-content>
     <div class="meal-title">{{ selectedMeal() }}</div>
     <div class="sub-header">
-      <app-food-search (foodSelected)="addFood($event)"></app-food-search>
+      <app-food-search (foodSelected)="addingFoodToMeal.emit($event)"></app-food-search>
     </div>
     <div class="meal-grid">
       <div class="meal-column">
         <app-meal-details
-          [foodItems]="foodItems"
-          (quantityFoodItemEvent)="updateQuantity($event)"
-          (deleteFoodItemEvent)="onDeleteFoodItem($event)"
+          [foodItems]="foodItems()"
+          (quantityFoodItemEvent)="updatingQuantityFood.emit($event)"
+          (deleteFoodItemEvent)="deletingFoodFromMeal.emit($event)"
         ></app-meal-details>
       </div>
       <div class="nutrients-column">
         <span class="meal-info">Meal nutrition vs daily needs</span>
-        <app-nutrients [nutrients]="sumEssentialNutrients()"></app-nutrients>
+        <app-nutrients [nutrients]="nutrients()"></app-nutrients>
       </div>
     </div>
   </mat-card-content>
